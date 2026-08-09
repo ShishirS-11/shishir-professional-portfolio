@@ -1,36 +1,70 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Award, ShieldCheck } from "lucide-react";
+import {
+  Award,
+  ShieldCheck,
+  ArrowUpRight,
+} from "lucide-react";
 
-const certifications = [
-  {
-    title: "Microsoft Azure Fundamentals",
-    issuer: "Microsoft",
-    credential: "AZ-900",
-  },
-  {
-    title: "Microsoft Azure Data Fundamentals",
-    issuer: "Microsoft",
-    credential: "DP-900",
-  },
-  {
-    title: "Vertex AI / Prompt Design",
-    issuer: "Google",
-    credential: "Course / Training",
-  },
-];
+import { createClient } from "@/lib/supabase/client";
+
+type Certification = {
+  id: string;
+  name: string;
+  issuer: string;
+  credential_id: string | null;
+  credential_url: string | null;
+  issue_date: string | null;
+  description: string | null;
+};
 
 export default function Certifications() {
+  const [items, setItems] =
+    useState<Certification[]>([]);
+  const [loading, setLoading] =
+    useState(true);
+
+  useEffect(() => {
+    async function load() {
+      const supabase = createClient();
+
+      const { data, error } =
+        await supabase
+          .from("certifications")
+          .select("*")
+          .eq("is_published", true)
+          .order("display_order");
+
+      if (!error) {
+        setItems(
+          (data as Certification[]) || []
+        );
+      }
+
+      setLoading(false);
+    }
+
+    load();
+  }, []);
+
   return (
     <section
       id="certifications"
       className="border-t border-emerald-400/10 px-6 py-28 md:px-10 md:py-36"
     >
       <div className="mx-auto max-w-7xl">
+
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{
+            opacity: 0,
+            y: 30,
+          }}
+          whileInView={{
+            opacity: 1,
+            y: 0,
+          }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
         >
@@ -47,49 +81,80 @@ export default function Certifications() {
           </h2>
         </motion.div>
 
-        <div className="mt-16 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {certifications.map((certificate, index) => (
-            <motion.article
-              key={certificate.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{
-                duration: 0.6,
-                delay: index * 0.08,
-              }}
-              className="tech-card rounded-3xl p-7 transition hover:bg-[#0c1511]"
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-400/10 bg-emerald-400/[0.04]">
-                  <Award
-                    size={19}
-                    className="text-emerald-300/60"
+        {loading ? (
+          <div className="mt-16 text-center text-sm text-white/30">
+            Loading certifications...
+          </div>
+        ) : (
+          <div className="mt-16 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {items.map((certificate, index) => (
+              <motion.article
+                key={certificate.id}
+                initial={{
+                  opacity: 0,
+                  y: 30,
+                }}
+                whileInView={{
+                  opacity: 1,
+                  y: 0,
+                }}
+                viewport={{
+                  once: true,
+                  amount: 0.2,
+                }}
+                transition={{
+                  duration: 0.6,
+                  delay: index * 0.08,
+                }}
+                className="tech-card rounded-3xl p-7 transition hover:bg-[#0c1511]"
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl border border-emerald-400/10 bg-emerald-400/[0.04]">
+                    <Award
+                      size={19}
+                      className="text-emerald-300/60"
+                    />
+                  </div>
+
+                  <ShieldCheck
+                    size={18}
+                    className="text-emerald-400/35"
                   />
                 </div>
 
-                <ShieldCheck
-                  size={18}
-                  className="text-emerald-400/35"
-                />
-              </div>
+                <h3 className="mt-8 text-xl font-medium">
+                  {certificate.name}
+                </h3>
 
-              <h3 className="mt-8 text-xl font-medium">
-                {certificate.title}
-              </h3>
+                <p className="mt-2 text-sm text-white/40">
+                  {certificate.issuer}
+                </p>
 
-              <p className="mt-2 text-sm text-white/40">
-                {certificate.issuer}
-              </p>
+                {certificate.credential_id && (
+                  <div className="mt-6">
+                    <span className="rounded-full bg-emerald-400/[0.05] px-3 py-1.5 text-xs text-emerald-300/50">
+                      {certificate.credential_id}
+                    </span>
+                  </div>
+                )}
 
-              <div className="mt-6">
-                <span className="rounded-full bg-emerald-400/[0.05] px-3 py-1.5 text-xs text-emerald-300/50">
-                  {certificate.credential}
-                </span>
-              </div>
-            </motion.article>
-          ))}
-        </div>
+                {certificate.credential_url && (
+                  <a
+                    href={
+                      certificate.credential_url
+                    }
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-6 inline-flex items-center gap-2 text-sm text-emerald-300/60 hover:text-emerald-300"
+                  >
+                    View credential
+                    <ArrowUpRight size={15} />
+                  </a>
+                )}
+              </motion.article>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

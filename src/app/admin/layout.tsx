@@ -1,50 +1,62 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   FolderKanban,
   Wrench,
   Award,
   BriefcaseBusiness,
+  GraduationCap,
   Trophy,
+  UserRound,
   LogOut,
-  Menu,
-  X,
-  ArrowUpRight,
+  ExternalLink,
 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import AdminGuard from "@/components/admin/AdminGuard";
 
 const navigation = [
   {
-    label: "Overview",
+    name: "Dashboard",
     href: "/admin/dashboard",
     icon: LayoutDashboard,
   },
   {
-    label: "Projects",
+    name: "Projects",
     href: "/admin/projects",
     icon: FolderKanban,
   },
   {
-    label: "Skills",
+    name: "Skills",
     href: "/admin/skills",
     icon: Wrench,
   },
   {
-    label: "Certificates",
+    name: "Certificates",
     href: "/admin/certifications",
     icon: Award,
   },
   {
-    label: "Experience",
+    name: "Experience",
     href: "/admin/experience",
     icon: BriefcaseBusiness,
   },
   {
-    label: "Achievements",
+    name: "Education",
+    href: "/admin/education",
+    icon: GraduationCap,
+  },
+  {
+    name: "Achievements",
     href: "/admin/achievements",
     icon: Trophy,
+  },
+  {
+    name: "Profile",
+    href: "/admin/profile",
+    icon: UserRound,
   },
 ];
 
@@ -53,101 +65,127 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleLogout() {
+    const supabase = createClient();
+
+    await supabase.auth.signOut();
+
+    router.replace("/admin/login");
+    router.refresh();
+  }
 
   return (
-    <div className="min-h-screen bg-[#050807] text-white">
-      {/* Mobile header */}
-      <div className="fixed left-0 right-0 top-0 z-50 flex h-16 items-center justify-between border-b border-emerald-400/10 bg-[#070b09]/95 px-5 backdrop-blur-xl lg:hidden">
-        <Link
-          href="/admin/dashboard"
-          className="flex items-center gap-2 font-semibold"
-        >
-          <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
-          ADMIN
-        </Link>
+    <AdminGuard>
+      <div className="min-h-screen bg-[#030504] text-white">
+        {/* Sidebar */}
+        <aside className="fixed inset-y-0 left-0 z-50 hidden w-72 border-r border-white/[0.07] bg-[#050706] lg:flex lg:flex-col">
+          {/* Logo */}
+          <div className="flex h-24 items-center border-b border-white/[0.07] px-8">
+            <Link
+              href="/admin/dashboard"
+              className="text-xl font-semibold tracking-[-0.04em]"
+            >
+              SHISHIR<span className="text-emerald-400">.</span>
+            </Link>
+          </div>
 
-        <button
-          onClick={() => setOpen(!open)}
-          className="text-white/60"
-        >
-          {open ? <X size={22} /> : <Menu size={22} />}
-        </button>
-      </div>
-
-      {/* Sidebar */}
-      <aside
-        className={`fixed bottom-0 left-0 top-0 z-40 w-64 border-r border-emerald-400/10 bg-[#070b09] transition-transform duration-300 lg:translate-x-0 ${
-          open ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="flex h-full flex-col p-5">
-          <Link
-            href="/admin/dashboard"
-            className="hidden items-center gap-2 px-3 py-4 lg:flex"
-          >
-            <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
-
-            <div>
-              <p className="text-sm font-semibold">
-                SHISHIR
-                <span className="text-emerald-400">.</span>
-              </p>
-
-              <p className="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-white/25">
-                Admin panel
-              </p>
-            </div>
-          </Link>
-
-          <div className="mt-8">
-            <p className="px-3 text-[10px] uppercase tracking-[0.2em] text-emerald-400/35">
-              Manage
+          {/* Navigation */}
+          <nav className="flex-1 overflow-y-auto px-4 py-6">
+            <p className="mb-4 px-3 text-[10px] font-medium uppercase tracking-[0.2em] text-white/25">
+              Control Center
             </p>
 
-            <nav className="mt-3 space-y-1">
+            <div className="space-y-1">
               {navigation.map((item) => {
                 const Icon = item.icon;
+
+                const isActive =
+                  pathname === item.href ||
+                  (item.href !== "/admin/dashboard" &&
+                    pathname.startsWith(item.href));
 
                 return (
                   <Link
                     key={item.href}
                     href={item.href}
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 rounded-xl px-3 py-3 text-sm text-white/45 transition hover:bg-emerald-400/[0.05] hover:text-emerald-300"
+                    className={`group flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition-all ${
+                      isActive
+                        ? "bg-emerald-400/[0.10] text-white"
+                        : "text-white/45 hover:bg-white/[0.04] hover:text-white"
+                    }`}
                   >
-                    <Icon size={17} strokeWidth={1.7} />
-                    {item.label}
+                    <Icon
+                      size={18}
+                      strokeWidth={1.8}
+                      className={
+                        isActive
+                          ? "text-emerald-400"
+                          : "text-white/40 group-hover:text-white/70"
+                      }
+                    />
+
+                    <span>{item.name}</span>
+
+                    {isActive && (
+                      <span className="ml-auto h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                    )}
                   </Link>
                 );
               })}
-            </nav>
-          </div>
+            </div>
+          </nav>
 
-          <div className="mt-auto space-y-2">
+          {/* Bottom section */}
+          <div className="border-t border-white/[0.07] p-4">
             <Link
               href="/"
               target="_blank"
-              className="flex items-center justify-between rounded-xl px-3 py-3 text-sm text-white/35 transition hover:bg-white/[0.03] hover:text-white"
+              className="mb-2 flex items-center gap-3 rounded-xl px-4 py-3 text-sm text-white/45 transition hover:bg-white/[0.04] hover:text-white"
             >
-              View portfolio
-              <ArrowUpRight size={15} />
+              <ExternalLink size={18} />
+
+              <span>View Portfolio</span>
             </Link>
 
-            <button className="flex w-full items-center gap-3 rounded-xl px-3 py-3 text-sm text-white/30 transition hover:bg-red-400/[0.05] hover:text-red-300">
-              <LogOut size={17} />
-              Sign out
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex w-full items-center gap-3 rounded-xl px-4 py-3 text-sm text-red-400/70 transition hover:bg-red-400/[0.06] hover:text-red-400"
+            >
+              <LogOut size={18} />
+
+              <span>Logout</span>
             </button>
           </div>
-        </div>
-      </aside>
+        </aside>
 
-      {/* Content */}
-      <main className="min-h-screen lg:pl-64">
-        <div className="px-5 pb-16 pt-24 md:px-10 lg:px-12 lg:pt-10">
-          {children}
+        {/* Mobile top navigation */}
+        <div className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-white/[0.07] bg-[#050706]/95 px-5 backdrop-blur lg:hidden">
+          <Link
+            href="/admin/dashboard"
+            className="text-lg font-semibold tracking-[-0.04em]"
+          >
+            SHISHIR<span className="text-emerald-400">.</span>
+          </Link>
+
+          <Link
+            href="/admin/dashboard"
+            className="rounded-lg p-2 text-white/50 hover:bg-white/[0.05] hover:text-white"
+          >
+            <LayoutDashboard size={20} />
+          </Link>
         </div>
-      </main>
-    </div>
+
+        {/* Main content */}
+        <main className="min-h-screen lg:ml-72">
+          <div className="mx-auto w-full max-w-[1600px] px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
+            {children}
+          </div>
+        </main>
+      </div>
+    </AdminGuard>
   );
 }

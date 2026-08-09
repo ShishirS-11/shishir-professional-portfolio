@@ -1,124 +1,402 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Pencil, Trash2, ExternalLink } from "lucide-react";
+import { useEffect, useState } from "react";
+import {
+  Pencil,
+  Plus,
+  Trash2,
+  X,
+} from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
-const initialProjects = [
-  {
-    id: 1,
-    title: "Agri Vision",
-    category: "AI / ML · IoT",
-    status: "Published",
-  },
-  {
-    id: 2,
-    title: "Lyrical Link",
-    category: "AI / ML · Computer Vision",
-    status: "Published",
-  },
-  {
-    id: 3,
-    title: "Shoe Store Management System",
-    category: "Software · Database",
-    status: "Published",
-  },
-];
+type Project = {
+  id: string;
+  title: string;
+  slug: string;
+  category: string | null;
+  short_description: string | null;
+  description: string | null;
+  problem: string | null;
+  solution: string | null;
+  technologies: string[];
+  github_url: string | null;
+  live_url: string | null;
+  image_url: string | null;
+  featured: boolean;
+  display_order: number;
+  is_published: boolean;
+};
 
-export default function ProjectsAdmin() {
-  const [projects, setProjects] = useState(initialProjects);
+export default function ProjectsAdminPage() {
+  const supabase = createClient();
 
-  const removeProject = (id: number) => {
-    setProjects((items) =>
-      items.filter((item) => item.id !== id)
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [editing, setEditing] =
+    useState<Project | null>(null);
+
+  const [title, setTitle] = useState("");
+  const [slug, setSlug] = useState("");
+  const [category, setCategory] = useState("");
+  const [shortDescription, setShortDescription] =
+    useState("");
+  const [description, setDescription] = useState("");
+  const [problem, setProblem] = useState("");
+  const [solution, setSolution] = useState("");
+  const [technologies, setTechnologies] =
+    useState("");
+  const [githubUrl, setGithubUrl] = useState("");
+  const [liveUrl, setLiveUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [featured, setFeatured] =
+    useState(false);
+
+  async function loadProjects() {
+    const { data } = await supabase
+      .from("projects")
+      .select("*")
+      .order("display_order");
+
+    setProjects((data as Project[]) || []);
+  }
+
+  useEffect(() => {
+    loadProjects();
+  }, []);
+
+  function reset() {
+    setTitle("");
+    setSlug("");
+    setCategory("");
+    setShortDescription("");
+    setDescription("");
+    setProblem("");
+    setSolution("");
+    setTechnologies("");
+    setGithubUrl("");
+    setLiveUrl("");
+    setImageUrl("");
+    setFeatured(false);
+    setEditing(null);
+    setShowForm(false);
+  }
+
+  function edit(project: Project) {
+    setEditing(project);
+    setTitle(project.title);
+    setSlug(project.slug);
+    setCategory(project.category || "");
+    setShortDescription(
+      project.short_description || ""
     );
-  };
+    setDescription(project.description || "");
+    setProblem(project.problem || "");
+    setSolution(project.solution || "");
+    setTechnologies(
+      project.technologies.join(", ")
+    );
+    setGithubUrl(project.github_url || "");
+    setLiveUrl(project.live_url || "");
+    setImageUrl(project.image_url || "");
+    setFeatured(project.featured);
+    setShowForm(true);
+  }
+
+  async function save() {
+    if (!title.trim() || !slug.trim()) {
+      alert("Title and slug are required.");
+      return;
+    }
+
+    const payload = {
+      title: title.trim(),
+      slug: slug.trim(),
+      category: category.trim() || null,
+      short_description:
+        shortDescription.trim() || null,
+      description: description.trim() || null,
+      problem: problem.trim() || null,
+      solution: solution.trim() || null,
+      technologies: technologies
+        .split(",")
+        .map((x) => x.trim())
+        .filter(Boolean),
+      github_url: githubUrl.trim() || null,
+      live_url: liveUrl.trim() || null,
+      image_url: imageUrl.trim() || null,
+      featured,
+    };
+
+    if (editing) {
+      await supabase
+        .from("projects")
+        .update(payload)
+        .eq("id", editing.id);
+    } else {
+      await supabase
+        .from("projects")
+        .insert(payload);
+    }
+
+    reset();
+    loadProjects();
+  }
+
+  async function remove(id: string) {
+    if (!confirm("Delete this project?")) return;
+
+    await supabase
+      .from("projects")
+      .delete()
+      .eq("id", id);
+
+    loadProjects();
+  }
+
+  async function toggle(project: Project) {
+    await supabase
+      .from("projects")
+      .update({
+        is_published: !project.is_published,
+      })
+      .eq("id", project.id);
+
+    loadProjects();
+  }
 
   return (
-    <div className="mx-auto max-w-7xl">
-      <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
-        <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-emerald-400/40">
-            Content
-          </p>
-
-          <h1 className="mt-3 text-3xl font-semibold tracking-tight">
-            Projects
-          </h1>
-
-          <p className="mt-2 text-sm text-white/30">
-            Manage the projects displayed on your portfolio.
-          </p>
-        </div>
-
-        <button className="flex w-fit items-center gap-2 rounded-xl bg-emerald-400 px-4 py-3 text-sm font-semibold text-[#04100b] transition hover:bg-emerald-300">
-          <Plus size={17} />
-          Add project
-        </button>
-      </div>
-
-      <div className="mt-10 overflow-hidden rounded-2xl border border-emerald-400/10 bg-[#0a100d]">
-        <div className="hidden grid-cols-[1fr_220px_130px_120px] border-b border-emerald-400/10 px-6 py-4 text-[10px] uppercase tracking-[0.18em] text-white/20 md:grid">
-          <span>Project</span>
-          <span>Category</span>
-          <span>Status</span>
-          <span className="text-right">Actions</span>
-        </div>
-
-        {projects.map((project) => (
-          <div
-            key={project.id}
-            className="grid gap-4 border-b border-emerald-400/[0.07] px-6 py-5 last:border-0 md:grid-cols-[1fr_220px_130px_120px] md:items-center"
-          >
-            <div>
-              <p className="font-medium text-white/80">
-                {project.title}
-              </p>
-
-              <p className="mt-1 text-xs text-white/25 md:hidden">
-                {project.category}
-              </p>
-            </div>
-
-            <p className="hidden text-sm text-white/35 md:block">
-              {project.category}
+    <main className="p-6 lg:p-10">
+      <div className="mx-auto max-w-7xl">
+        <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-end">
+          <div>
+            <p className="text-sm uppercase tracking-[0.2em] text-emerald-400">
+              Portfolio Content
             </p>
 
-            <span className="w-fit rounded-full bg-emerald-400/[0.06] px-3 py-1 text-xs text-emerald-300/60">
-              {project.status}
-            </span>
+            <h1 className="mt-2 text-4xl font-semibold">
+              Projects
+            </h1>
 
-            <div className="flex justify-start gap-2 md:justify-end">
-              <button
-                className="rounded-lg border border-white/10 p-2 text-white/35 transition hover:border-emerald-400/20 hover:text-emerald-300"
-                title="Edit"
-              >
-                <Pencil size={15} />
-              </button>
-
-              <button
-                onClick={() => removeProject(project.id)}
-                className="rounded-lg border border-white/10 p-2 text-white/35 transition hover:border-red-400/20 hover:text-red-300"
-                title="Delete"
-              >
-                <Trash2 size={15} />
-              </button>
-
-              <a
-                href="#projects"
-                className="rounded-lg border border-white/10 p-2 text-white/35 transition hover:border-emerald-400/20 hover:text-emerald-300"
-                title="View"
-              >
-                <ExternalLink size={15} />
-              </a>
-            </div>
+            <p className="mt-2 text-zinc-500">
+              Showcase projects that demonstrate your skills.
+            </p>
           </div>
-        ))}
-      </div>
 
-      <p className="mt-5 text-xs text-white/20">
-        Current actions are local UI only. Azure persistence and
-        authentication will be connected next.
-      </p>
-    </div>
+          <button
+            onClick={() => {
+              reset();
+              setShowForm(true);
+            }}
+            className="flex items-center justify-center gap-2 rounded-xl bg-emerald-400 px-5 py-3 font-medium text-black"
+          >
+            <Plus size={18} />
+            Add Project
+          </button>
+        </div>
+
+        {showForm && (
+          <div className="mb-8 rounded-2xl border border-white/10 bg-white/[0.025] p-6">
+            <div className="mb-6 flex justify-between">
+              <h2 className="text-xl font-semibold">
+                {editing
+                  ? "Edit Project"
+                  : "Add Project"}
+              </h2>
+
+              <button onClick={reset}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <input
+                value={title}
+                onChange={(e) =>
+                  setTitle(e.target.value)
+                }
+                placeholder="Project title"
+                className="input"
+              />
+
+              <input
+                value={slug}
+                onChange={(e) =>
+                  setSlug(e.target.value)
+                }
+                placeholder="project-slug"
+                className="input"
+              />
+
+              <input
+                value={category}
+                onChange={(e) =>
+                  setCategory(e.target.value)
+                }
+                placeholder="Category"
+                className="input"
+              />
+
+              <input
+                value={shortDescription}
+                onChange={(e) =>
+                  setShortDescription(e.target.value)
+                }
+                placeholder="Short description"
+                className="input"
+              />
+
+              <textarea
+                value={description}
+                onChange={(e) =>
+                  setDescription(e.target.value)
+                }
+                placeholder="Full description"
+                rows={4}
+                className="input md:col-span-2"
+              />
+
+              <textarea
+                value={problem}
+                onChange={(e) =>
+                  setProblem(e.target.value)
+                }
+                placeholder="Problem"
+                rows={3}
+                className="input"
+              />
+
+              <textarea
+                value={solution}
+                onChange={(e) =>
+                  setSolution(e.target.value)
+                }
+                placeholder="Solution"
+                rows={3}
+                className="input"
+              />
+
+              <input
+                value={technologies}
+                onChange={(e) =>
+                  setTechnologies(e.target.value)
+                }
+                placeholder="Python, Next.js, Supabase"
+                className="input md:col-span-2"
+              />
+
+              <input
+                value={githubUrl}
+                onChange={(e) =>
+                  setGithubUrl(e.target.value)
+                }
+                placeholder="GitHub URL"
+                className="input"
+              />
+
+              <input
+                value={liveUrl}
+                onChange={(e) =>
+                  setLiveUrl(e.target.value)
+                }
+                placeholder="Live URL"
+                className="input"
+              />
+
+              <input
+                value={imageUrl}
+                onChange={(e) =>
+                  setImageUrl(e.target.value)
+                }
+                placeholder="Image URL"
+                className="input md:col-span-2"
+              />
+
+              <label className="flex items-center gap-3 text-sm text-zinc-400">
+                <input
+                  type="checkbox"
+                  checked={featured}
+                  onChange={(e) =>
+                    setFeatured(e.target.checked)
+                  }
+                />
+                Featured project
+              </label>
+            </div>
+
+            <button
+              onClick={save}
+              className="mt-6 rounded-xl bg-emerald-400 px-6 py-3 font-medium text-black"
+            >
+              {editing
+                ? "Update Project"
+                : "Save Project"}
+            </button>
+          </div>
+        )}
+
+        <div className="space-y-3">
+          {projects.map((project) => (
+            <div
+              key={project.id}
+              className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.025] p-5 md:flex-row md:items-center md:justify-between"
+            >
+              <div>
+                <h3 className="font-medium">
+                  {project.title}
+                </h3>
+
+                <p className="mt-1 text-sm text-zinc-500">
+                  {project.short_description}
+                </p>
+
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {project.technologies.map(
+                    (technology) => (
+                      <span
+                        key={technology}
+                        className="rounded-full bg-white/5 px-2 py-1 text-xs text-zinc-500"
+                      >
+                        {technology}
+                      </span>
+                    )
+                  )}
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={() => toggle(project)}
+                  className="rounded-lg border border-white/10 px-3 py-2 text-xs"
+                >
+                  {project.is_published
+                    ? "Unpublish"
+                    : "Publish"}
+                </button>
+
+                <button
+                  onClick={() => edit(project)}
+                  className="rounded-lg border border-white/10 p-2"
+                >
+                  <Pencil size={16} />
+                </button>
+
+                <button
+                  onClick={() => remove(project.id)}
+                  className="rounded-lg border border-white/10 p-2 text-red-400"
+                >
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            </div>
+          ))}
+
+          {projects.length === 0 && (
+            <div className="rounded-2xl border border-white/10 p-10 text-center text-zinc-500">
+              No projects yet.
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
   );
 }

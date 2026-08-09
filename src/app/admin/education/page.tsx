@@ -10,38 +10,40 @@ import {
 
 import { createClient } from "@/lib/supabase/client";
 
-type Achievement = {
+type Education = {
   id: string;
-  title: string;
-  organization: string | null;
-  achievement_date: string | null;
+  institution: string;
+  degree: string;
+  field_of_study: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  grade: string | null;
   description: string | null;
-  proof_url: string | null;
-  image_url: string | null;
+  institution_url: string | null;
   display_order: number;
   is_published: boolean;
 };
 
-export default function AchievementsAdminPage() {
+export default function EducationAdminPage() {
   const supabase = createClient();
 
   const [items, setItems] =
-    useState<Achievement[]>([]);
+    useState<Education[]>([]);
   const [editing, setEditing] =
-    useState<Achievement | null>(null);
+    useState<Education | null>(null);
   const [showForm, setShowForm] =
     useState(false);
 
-  const [title, setTitle] = useState("");
-  const [organization, setOrganization] =
+  const [institution, setInstitution] =
     useState("");
-  const [date, setDate] = useState("");
+  const [degree, setDegree] = useState("");
+  const [field, setField] = useState("");
+  const [start, setStart] = useState("");
+  const [end, setEnd] = useState("");
+  const [grade, setGrade] = useState("");
   const [description, setDescription] =
     useState("");
-  const [proofUrl, setProofUrl] =
-    useState("");
-  const [imageUrl, setImageUrl] =
-    useState("");
+  const [url, setUrl] = useState("");
   const [displayOrder, setDisplayOrder] =
     useState("0");
 
@@ -49,7 +51,7 @@ export default function AchievementsAdminPage() {
 
   async function load() {
     const { data, error } = await supabase
-      .from("achievements")
+      .from("education")
       .select("*")
       .order("display_order");
 
@@ -58,9 +60,7 @@ export default function AchievementsAdminPage() {
       return;
     }
 
-    setItems(
-      (data as Achievement[]) || []
-    );
+    setItems((data as Education[]) || []);
   }
 
   useEffect(() => {
@@ -68,31 +68,29 @@ export default function AchievementsAdminPage() {
   }, []);
 
   function reset() {
-    setTitle("");
-    setOrganization("");
-    setDate("");
+    setInstitution("");
+    setDegree("");
+    setField("");
+    setStart("");
+    setEnd("");
+    setGrade("");
     setDescription("");
-    setProofUrl("");
-    setImageUrl("");
+    setUrl("");
     setDisplayOrder("0");
     setEditing(null);
     setShowForm(false);
   }
 
-  function edit(item: Achievement) {
+  function edit(item: Education) {
     setEditing(item);
-    setTitle(item.title);
-    setOrganization(
-      item.organization || ""
-    );
-    setDate(
-      item.achievement_date || ""
-    );
-    setDescription(
-      item.description || ""
-    );
-    setProofUrl(item.proof_url || "");
-    setImageUrl(item.image_url || "");
+    setInstitution(item.institution);
+    setDegree(item.degree);
+    setField(item.field_of_study || "");
+    setStart(item.start_date || "");
+    setEnd(item.end_date || "");
+    setGrade(item.grade || "");
+    setDescription(item.description || "");
+    setUrl(item.institution_url || "");
     setDisplayOrder(
       String(item.display_order)
     );
@@ -102,22 +100,25 @@ export default function AchievementsAdminPage() {
   async function save() {
     setError("");
 
-    if (!title.trim()) {
-      setError("Title is required.");
+    if (!institution.trim() || !degree.trim()) {
+      setError(
+        "Institution and degree are required."
+      );
       return;
     }
 
     const payload = {
-      title: title.trim(),
-      organization:
-        organization.trim() || null,
-      achievement_date: date || null,
+      institution: institution.trim(),
+      degree: degree.trim(),
+      field_of_study:
+        field.trim() || null,
+      start_date: start || null,
+      end_date: end || null,
+      grade: grade.trim() || null,
       description:
         description.trim() || null,
-      proof_url:
-        proofUrl.trim() || null,
-      image_url:
-        imageUrl.trim() || null,
+      institution_url:
+        url.trim() || null,
       display_order:
         Number(displayOrder) || 0,
       is_published: true,
@@ -125,11 +126,11 @@ export default function AchievementsAdminPage() {
 
     const result = editing
       ? await supabase
-          .from("achievements")
+          .from("education")
           .update(payload)
           .eq("id", editing.id)
       : await supabase
-          .from("achievements")
+          .from("education")
           .insert(payload);
 
     if (result.error) {
@@ -144,14 +145,14 @@ export default function AchievementsAdminPage() {
   async function remove(id: string) {
     if (
       !confirm(
-        "Delete this achievement?"
+        "Delete this education entry?"
       )
     ) {
       return;
     }
 
     const { error } = await supabase
-      .from("achievements")
+      .from("education")
       .delete()
       .eq("id", id);
 
@@ -174,7 +175,7 @@ export default function AchievementsAdminPage() {
             </p>
 
             <h1 className="mt-2 text-4xl font-semibold">
-              Achievements
+              Education
             </h1>
           </div>
 
@@ -186,7 +187,7 @@ export default function AchievementsAdminPage() {
             className="flex items-center gap-2 rounded-xl bg-emerald-400 px-5 py-3 font-medium text-black"
           >
             <Plus size={18} />
-            Add Achievement
+            Add Education
           </button>
         </div>
 
@@ -202,8 +203,8 @@ export default function AchievementsAdminPage() {
             <div className="mb-6 flex justify-between">
               <h2 className="text-xl font-semibold">
                 {editing
-                  ? "Edit Achievement"
-                  : "Add Achievement"}
+                  ? "Edit Education"
+                  : "Add Education"}
               </h2>
 
               <button onClick={reset}>
@@ -215,19 +216,10 @@ export default function AchievementsAdminPage() {
 
               <input
                 className="input"
-                placeholder="Title"
-                value={title}
+                placeholder="Institution"
+                value={institution}
                 onChange={(e) =>
-                  setTitle(e.target.value)
-                }
-              />
-
-              <input
-                className="input"
-                placeholder="Organization"
-                value={organization}
-                onChange={(e) =>
-                  setOrganization(
+                  setInstitution(
                     e.target.value
                   )
                 }
@@ -235,10 +227,55 @@ export default function AchievementsAdminPage() {
 
               <input
                 className="input"
-                type="date"
-                value={date}
+                placeholder="Degree"
+                value={degree}
                 onChange={(e) =>
-                  setDate(e.target.value)
+                  setDegree(e.target.value)
+                }
+              />
+
+              <input
+                className="input"
+                placeholder="Field of study"
+                value={field}
+                onChange={(e) =>
+                  setField(e.target.value)
+                }
+              />
+
+              <input
+                className="input"
+                placeholder="Grade / CGPA"
+                value={grade}
+                onChange={(e) =>
+                  setGrade(e.target.value)
+                }
+              />
+
+              <input
+                className="input"
+                type="date"
+                value={start}
+                onChange={(e) =>
+                  setStart(e.target.value)
+                }
+              />
+
+              <input
+                className="input"
+                type="date"
+                value={end}
+                onChange={(e) =>
+                  setEnd(e.target.value)
+                }
+              />
+
+              <input
+                className="input"
+                placeholder="Institution URL"
+                value={url}
+                onChange={(e) =>
+                  setUrl(e.target.value)
                 }
               />
 
@@ -254,27 +291,9 @@ export default function AchievementsAdminPage() {
                 }
               />
 
-              <input
-                className="input"
-                placeholder="Proof URL"
-                value={proofUrl}
-                onChange={(e) =>
-                  setProofUrl(e.target.value)
-                }
-              />
-
-              <input
-                className="input"
-                placeholder="Image URL"
-                value={imageUrl}
-                onChange={(e) =>
-                  setImageUrl(e.target.value)
-                }
-              />
-
               <textarea
                 className="input md:col-span-2"
-                rows={5}
+                rows={4}
                 placeholder="Description"
                 value={description}
                 onChange={(e) =>
@@ -290,8 +309,8 @@ export default function AchievementsAdminPage() {
               className="mt-6 rounded-xl bg-emerald-400 px-6 py-3 font-medium text-black"
             >
               {editing
-                ? "Update Achievement"
-                : "Save Achievement"}
+                ? "Update Education"
+                : "Save Education"}
             </button>
           </div>
         )}
@@ -304,17 +323,22 @@ export default function AchievementsAdminPage() {
             >
               <div>
                 <h3 className="font-medium">
-                  {item.title}
+                  {item.degree}
                 </h3>
 
                 <p className="mt-1 text-sm text-emerald-400/60">
-                  {item.organization ||
-                    "Achievement"}
+                  {item.institution}
                 </p>
 
-                {item.description && (
-                  <p className="mt-2 max-w-2xl text-sm text-zinc-500">
-                    {item.description}
+                {item.field_of_study && (
+                  <p className="mt-1 text-sm text-zinc-500">
+                    {item.field_of_study}
+                  </p>
+                )}
+
+                {item.grade && (
+                  <p className="mt-2 text-xs text-zinc-600">
+                    {item.grade}
                   </p>
                 )}
               </div>
