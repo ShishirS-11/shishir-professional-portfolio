@@ -37,7 +37,7 @@ export default function About() {
             className="max-w-3xl"
           >
             <p className="text-xl leading-9 text-white/70 md:text-2xl md:leading-10">
-              I&apos;m Shishir, an Artificial Intelligence &amp; Data
+              I&apos;m Shishir Shetty, an Artificial Intelligence &amp; Data
               Science engineering student who enjoys turning ideas
               into things people can actually use.
             </p>

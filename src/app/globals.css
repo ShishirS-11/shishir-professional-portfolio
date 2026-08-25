@@ -1,48 +1,66 @@
 @import "tailwindcss";
 
 /* =========================================================
-   GLOBAL THEME
-   Dark + Emerald / Developer Portfolio
+   SHISHIR PORTFOLIO — GLOBAL DESIGN SYSTEM
+   Dark / warm / editorial / understated
    ========================================================= */
 
 :root {
-  --background: #050807;
-  --foreground: #ffffff;
+  --background: #0a0a09;
+  --foreground: #f3f2ee;
 
-  --emerald: #34d399;
-  --emerald-light: #6ee7b7;
-  --emerald-dark: #059669;
+  --surface: #11110f;
+  --surface-raised: #151513;
+  --surface-soft: #0e0e0c;
 
-  --surface: #070a09;
-  --surface-light: rgba(255, 255, 255, 0.025);
+  --text-primary: #f3f2ee;
+  --text-secondary: #aaa9a2;
+  --text-muted: #77766f;
+  --text-faint: #56554f;
 
-  --border: rgba(255, 255, 255, 0.1);
-  --border-light: rgba(255, 255, 255, 0.06);
+  --accent: #69c7a0;
+  --accent-soft: rgba(105, 199, 160, 0.1);
+  --accent-border: rgba(105, 199, 160, 0.18);
 
-  --muted: #71717a;
-  --muted-dark: #52525b;
+  --border: rgba(255, 255, 255, 0.085);
+  --border-soft: rgba(255, 255, 255, 0.055);
 
-  --danger: #f87171;
-  --warning: #facc15;
+  --danger: #e87878;
+  --warning: #d9b85b;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
 }
 
 /* =========================================================
-   BASE
+   RESET
    ========================================================= */
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
+  background: var(--background);
 }
 
 body {
   margin: 0;
   min-height: 100vh;
 
-  background: var(--background);
+  background:
+    radial-gradient(
+      circle at 50% -20%,
+      rgba(105, 199, 160, 0.045),
+      transparent 38%
+    ),
+    var(--background);
+
   color: var(--foreground);
 
   font-family:
@@ -52,15 +70,13 @@ body {
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  text-rendering: optimizeLegibility;
 }
 
-/* =========================================================
-   SELECTION
-   ========================================================= */
-
 ::selection {
-  background: rgba(52, 211, 153, 0.25);
-  color: white;
+  background: rgba(105, 199, 160, 0.2);
+  color: #ffffff;
 }
 
 /* =========================================================
@@ -72,16 +88,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #050807;
+  background: #0a0a09;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(52, 211, 153, 0.3);
+  background: rgba(255, 255, 255, 0.12);
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(52, 211, 153, 0.5);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 /* =========================================================
@@ -110,42 +126,50 @@ button:disabled {
 }
 
 /* =========================================================
-   FORM INPUT
-   Used throughout Admin Dashboard
+   FORM ELEMENTS
    ========================================================= */
+
+input,
+textarea,
+select {
+  font: inherit;
+}
 
 .input {
   width: 100%;
 
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
 
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.025);
 
-  border-radius: 0.75rem;
+  padding: 0.8rem 1rem;
 
-  padding: 0.75rem 1rem;
-
-  color: white;
+  color: var(--text-primary);
 
   outline: none;
 
   transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease,
-    box-shadow 0.2s ease;
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.input:hover {
+  border-color: rgba(255, 255, 255, 0.13);
 }
 
 .input:focus {
-  border-color: rgba(52, 211, 153, 0.5);
+  border-color: var(--accent-border);
 
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(255, 255, 255, 0.035);
 
   box-shadow:
-    0 0 0 3px rgba(52, 211, 153, 0.05);
+    0 0 0 3px rgba(105, 199, 160, 0.055);
 }
 
 .input::placeholder {
-  color: rgb(82, 82, 91);
+  color: var(--text-faint);
 }
 
 .input:disabled {
@@ -153,18 +177,10 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* =========================================================
-   TEXTAREA
-   ========================================================= */
-
 textarea.input {
+  min-height: 110px;
   resize: vertical;
-  min-height: 100px;
 }
-
-/* =========================================================
-   SELECT
-   ========================================================= */
 
 select.input {
   appearance: none;
@@ -172,38 +188,24 @@ select.input {
 }
 
 select.input option {
-  background: #070a09;
-  color: white;
+  background: #11110f;
+  color: var(--text-primary);
 }
-
-/* =========================================================
-   CHECKBOX
-   ========================================================= */
 
 input[type="checkbox"] {
   width: 16px;
   height: 16px;
-
-  accent-color: var(--emerald);
-
+  accent-color: var(--accent);
   cursor: pointer;
 }
-
-/* =========================================================
-   DATE INPUT
-   ========================================================= */
 
 input[type="date"].input {
   color-scheme: dark;
 }
 
-/* =========================================================
-   NUMBER INPUT
-   ========================================================= */
-
 input[type="number"].input::-webkit-inner-spin-button,
 input[type="number"].input::-webkit-outer-spin-button {
-  opacity: 0.5;
+  opacity: 0.45;
 }
 
 /* =========================================================
@@ -212,69 +214,109 @@ input[type="number"].input::-webkit-outer-spin-button {
 
 .admin-surface {
   background: var(--surface);
+
   border: 1px solid var(--border);
-  border-radius: 1rem;
+
+  border-radius: var(--radius-lg);
 }
 
 .admin-card {
-  background: var(--surface-light);
-  border: 1px solid var(--border);
-  border-radius: 1rem;
+  background: var(--surface-soft);
+
+  border: 1px solid var(--border-soft);
+
+  border-radius: var(--radius-lg);
 
   transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease;
+    border-color 180ms ease,
+    background-color 180ms ease,
+    transform 180ms ease;
 }
 
 .admin-card:hover {
-  border-color: rgba(52, 211, 153, 0.2);
-  background: rgba(255, 255, 255, 0.035);
+  border-color: rgba(255, 255, 255, 0.11);
+  background: var(--surface-raised);
 }
 
 /* =========================================================
-   EMERALD GLOW
+   PORTFOLIO CARDS
+   ========================================================= */
+
+.tech-card {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.025),
+      rgba(255, 255, 255, 0.012)
+    );
+
+  border: 1px solid var(--border-soft);
+
+  box-shadow:
+    0 10px 35px rgba(0, 0, 0, 0.12);
+
+  transition:
+    border-color 220ms ease,
+    background-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 220ms ease;
+}
+
+.tech-card:hover {
+  border-color: rgba(255, 255, 255, 0.11);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.035),
+      rgba(255, 255, 255, 0.016)
+    );
+
+  box-shadow:
+    0 16px 45px rgba(0, 0, 0, 0.18);
+}
+
+/* =========================================================
+   QUIET ACCENT
    ========================================================= */
 
 .emerald-glow {
   box-shadow:
-    0 0 40px rgba(52, 211, 153, 0.08);
+    0 0 45px rgba(105, 199, 160, 0.055);
 }
 
 .emerald-text-glow {
   text-shadow:
-    0 0 30px rgba(52, 211, 153, 0.25);
+    0 0 24px rgba(105, 199, 160, 0.12);
 }
 
 /* =========================================================
-   BACKGROUND GRID
+   BACKGROUND TEXTURES
+   Extremely subtle — never dominant
    ========================================================= */
 
 .background-grid {
   background-image:
     linear-gradient(
-      rgba(52, 211, 153, 0.025) 1px,
+      rgba(255, 255, 255, 0.018) 1px,
       transparent 1px
     ),
     linear-gradient(
       90deg,
-      rgba(52, 211, 153, 0.025) 1px,
+      rgba(255, 255, 255, 0.018) 1px,
       transparent 1px
     );
 
-  background-size: 50px 50px;
+  background-size: 64px 64px;
 }
-
-/* =========================================================
-   SUBTLE DOT PATTERN
-   ========================================================= */
 
 .background-dots {
   background-image: radial-gradient(
-    rgba(52, 211, 153, 0.12) 1px,
+    rgba(255, 255, 255, 0.055) 1px,
     transparent 1px
   );
 
-  background-size: 24px 24px;
+  background-size: 28px 28px;
 }
 
 /* =========================================================
@@ -282,28 +324,57 @@ input[type="number"].input::-webkit-outer-spin-button {
    ========================================================= */
 
 .text-muted {
-  color: var(--muted);
+  color: var(--text-muted);
 }
 
 .text-emerald {
-  color: var(--emerald);
+  color: var(--accent);
 }
 
 /* =========================================================
-   FOCUS ACCESSIBILITY
+   FOCUS
    ========================================================= */
 
 :focus-visible {
-  outline: 2px solid rgba(52, 211, 153, 0.7);
+  outline: 1px solid rgba(105, 199, 160, 0.65);
   outline-offset: 3px;
 }
 
 /* =========================================================
-   IMAGE
+   IMAGES
    ========================================================= */
 
 img {
   max-width: 100%;
+  height: auto;
+}
+
+/* =========================================================
+   HR
+   ========================================================= */
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* =========================================================
@@ -312,6 +383,11 @@ img {
 
 @media (max-width: 640px) {
   .input {
-    padding: 0.7rem 0.9rem;
+    padding: 0.72rem 0.9rem;
+  }
+
+  .tech-card {
+    box-shadow:
+      0 8px 25px rgba(0, 0, 0, 0.1);
   }
 }

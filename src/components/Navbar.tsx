@@ -22,7 +22,6 @@ export default function Navbar() {
           className="group flex items-center gap-2 text-lg font-semibold tracking-tight"
         >
           <span className="h-2 w-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
-
           SHISHIR<span className="text-emerald-400">.</span>
         </a>
 

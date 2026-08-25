@@ -18,43 +18,52 @@ type ExperienceItem = {
   description: string | null;
   responsibilities: string[];
   technologies: string[];
+  company_url: string | null;
+  display_order: number;
 };
 
 function formatDate(value: string | null) {
   if (!value) return "";
 
-  return new Date(value).toLocaleDateString(
-    "en-US",
-    {
-      month: "short",
-      year: "numeric",
-    }
-  );
+  const date = new Date(`${value}T00:00:00`);
+
+  if (Number.isNaN(date.getTime())) return "";
+
+  return date.toLocaleDateString("en-US", {
+    month: "short",
+    year: "numeric",
+  });
 }
 
 export default function Experience() {
-  const [items, setItems] =
-    useState<ExperienceItem[]>([]);
-  const [loading, setLoading] =
-    useState(true);
+  const [items, setItems] = useState<ExperienceItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     async function load() {
       const supabase = createClient();
 
-      const { data, error } =
-        await supabase
-          .from("experience")
-          .select("*")
-          .eq("is_published", true)
-          .order("display_order");
+      const { data, error: fetchError } = await supabase
+        .from("experience")
+        .select("*")
+        .eq("is_published", true)
+        .order("display_order", {
+          ascending: true,
+        });
 
-      if (!error) {
-        setItems(
-          (data as ExperienceItem[]) || []
+      if (fetchError) {
+        console.error(
+          "PUBLIC EXPERIENCE ERROR:",
+          fetchError
         );
+
+        setError(fetchError.message || "Unable to load experience.");
+        setLoading(false);
+        return;
       }
 
+      setItems((data as ExperienceItem[]) || []);
       setLoading(false);
     }
 
@@ -67,7 +76,6 @@ export default function Experience() {
       className="border-t border-emerald-400/10 px-6 py-28 md:px-10 md:py-36"
     >
       <div className="mx-auto max-w-7xl">
-
         <motion.div
           initial={{
             opacity: 0,
@@ -93,11 +101,25 @@ export default function Experience() {
           </h2>
         </motion.div>
 
-        {loading ? (
+        {loading && (
           <div className="mt-16 text-center text-sm text-white/30">
             Loading experience...
           </div>
-        ) : (
+        )}
+
+        {!loading && error && (
+          <div className="mt-16 text-center text-sm text-red-300/70">
+            Unable to load experience.
+          </div>
+        )}
+
+        {!loading && !error && items.length === 0 && (
+          <div className="mt-16 text-center text-sm text-white/30">
+            No experience available.
+          </div>
+        )}
+
+        {!loading && !error && items.length > 0 && (
           <div className="mt-16 space-y-4">
             {items.map((item, index) => (
               <motion.article
@@ -121,7 +143,6 @@ export default function Experience() {
                 className="tech-card rounded-3xl p-7 md:p-8"
               >
                 <div className="flex flex-col gap-6 md:flex-row md:justify-between">
-
                   <div className="flex gap-5">
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-emerald-400/10 bg-emerald-400/[0.04]">
                       <BriefcaseBusiness
@@ -149,15 +170,10 @@ export default function Experience() {
 
                   <div className="md:text-right">
                     <p className="text-sm text-white/35">
-                      {formatDate(
-                        item.start_date
-                      )}{" "}
-                      —{" "}
+                      {formatDate(item.start_date)} —{" "}
                       {item.is_current
                         ? "Present"
-                        : formatDate(
-                            item.end_date
-                          )}
+                        : formatDate(item.end_date)}
                     </p>
 
                     {item.employment_type && (
@@ -174,13 +190,12 @@ export default function Experience() {
                   </p>
                 )}
 
-                {item.responsibilities?.length >
-                  0 && (
+                {item.responsibilities?.length > 0 && (
                   <ul className="mt-6 space-y-2">
                     {item.responsibilities.map(
-                      (responsibility) => (
+                      (responsibility, responsibilityIndex) => (
                         <li
-                          key={responsibility}
+                          key={`${item.id}-responsibility-${responsibilityIndex}`}
                           className="text-sm leading-7 text-white/35"
                         >
                           <span className="mr-2 text-emerald-400">
@@ -193,8 +208,7 @@ export default function Experience() {
                   </ul>
                 )}
 
-                {item.technologies?.length >
-                  0 && (
+                {item.technologies?.length > 0 && (
                   <div className="mt-7 flex flex-wrap gap-2">
                     {item.technologies.map(
                       (technology) => (
@@ -207,6 +221,17 @@ export default function Experience() {
                       )
                     )}
                   </div>
+                )}
+
+                {item.company_url && (
+                  <a
+                    href={item.company_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-7 inline-flex text-sm text-emerald-300/60 transition hover:text-emerald-300"
+                  >
+                    Company website →
+                  </a>
                 )}
               </motion.article>
             ))}

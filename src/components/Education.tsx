@@ -2,7 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { GraduationCap } from "lucide-react";
+import {
+  GraduationCap,
+  ExternalLink,
+} from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
 
@@ -15,37 +18,49 @@ type EducationItem = {
   end_date: string | null;
   grade: string | null;
   description: string | null;
+  institution_url: string | null;
+  display_order: number;
 };
 
 function formatYear(value: string | null) {
   if (!value) return "";
 
-  return new Date(value).getFullYear();
+  const date = new Date(`${value}T00:00:00`);
+
+  if (Number.isNaN(date.getTime())) return "";
+
+  return date.getFullYear();
 }
 
 export default function Education() {
-  const [items, setItems] =
-    useState<EducationItem[]>([]);
-  const [loading, setLoading] =
-    useState(true);
+  const [items, setItems] = useState<EducationItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     async function load() {
       const supabase = createClient();
 
-      const { data, error } =
-        await supabase
-          .from("education")
-          .select("*")
-          .eq("is_published", true)
-          .order("display_order");
+      const { data, error: fetchError } = await supabase
+        .from("education")
+        .select("*")
+        .eq("is_published", true)
+        .order("display_order", {
+          ascending: true,
+        });
 
-      if (!error) {
-        setItems(
-          (data as EducationItem[]) || []
+      if (fetchError) {
+        console.error(
+          "PUBLIC EDUCATION ERROR:",
+          fetchError
         );
+
+        setError(fetchError.message || "Unable to load education.");
+        setLoading(false);
+        return;
       }
 
+      setItems((data as EducationItem[]) || []);
       setLoading(false);
     }
 
@@ -58,7 +73,6 @@ export default function Education() {
       className="px-6 py-28 md:px-10 md:py-36"
     >
       <div className="mx-auto max-w-7xl">
-
         <motion.div
           initial={{
             opacity: 0,
@@ -84,11 +98,25 @@ export default function Education() {
           </h2>
         </motion.div>
 
-        {loading ? (
+        {loading && (
           <div className="mt-16 text-center text-sm text-white/30">
             Loading education...
           </div>
-        ) : (
+        )}
+
+        {!loading && error && (
+          <div className="mt-16 text-center text-sm text-red-300/70">
+            Unable to load education.
+          </div>
+        )}
+
+        {!loading && !error && items.length === 0 && (
+          <div className="mt-16 text-center text-sm text-white/30">
+            No education available.
+          </div>
+        )}
+
+        {!loading && !error && items.length > 0 && (
           <div className="mt-16 space-y-4">
             {items.map((item, index) => (
               <motion.article
@@ -112,7 +140,6 @@ export default function Education() {
                 className="tech-card rounded-3xl p-7 md:p-8"
               >
                 <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-
                   <div className="flex gap-5">
                     <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-emerald-400/10 bg-emerald-400/[0.04]">
                       <GraduationCap
@@ -140,13 +167,8 @@ export default function Education() {
 
                   <div className="md:text-right">
                     <p className="text-sm text-white/35">
-                      {formatYear(
-                        item.start_date
-                      )}{" "}
-                      —{" "}
-                      {formatYear(
-                        item.end_date
-                      )}
+                      {formatYear(item.start_date)} —{" "}
+                      {formatYear(item.end_date)}
                     </p>
 
                     {item.grade && (
@@ -161,6 +183,18 @@ export default function Education() {
                   <p className="mt-7 max-w-3xl text-sm leading-7 text-white/35">
                     {item.description}
                   </p>
+                )}
+
+                {item.institution_url && (
+                  <a
+                    href={item.institution_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-6 inline-flex items-center gap-2 text-sm text-emerald-300/60 transition hover:text-emerald-300"
+                  >
+                    Institution website
+                    <ExternalLink size={14} />
+                  </a>
                 )}
               </motion.article>
             ))}

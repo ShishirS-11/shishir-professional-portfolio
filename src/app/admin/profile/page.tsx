@@ -96,7 +96,7 @@ export default function ProfilePage() {
 
             <div>
               <h2 className="text-xl font-medium">
-                {profile?.full_name || "Shishir"}
+                {profile?.full_name || "Shishir Shetty"}
               </h2>
 
               <p className="mt-1 text-sm text-white/40">

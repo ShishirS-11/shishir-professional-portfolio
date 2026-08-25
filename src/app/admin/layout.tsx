@@ -88,7 +88,7 @@ export default function AdminLayout({
               href="/admin/dashboard"
               className="text-xl font-semibold tracking-[-0.04em]"
             >
-              SHISHIR<span className="text-emerald-400">.</span>
+              SHISHIR SHETTY<span className="text-emerald-400">.</span>
             </Link>
           </div>
 

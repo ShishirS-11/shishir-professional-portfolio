@@ -42,11 +42,9 @@ export default function Hero() {
         >
           I build things
           <br />
-
           <span className="text-white/30">
             that actually{" "}
           </span>
-
           <span className="text-emerald-300">
             work.
           </span>
@@ -58,7 +56,7 @@ export default function Hero() {
           transition={{ duration: 0.7, delay: 0.25 }}
           className="mt-8 max-w-2xl text-lg leading-8 text-white/45 md:text-xl"
         >
-          I&apos;m Shishir — an AI &amp; Data Science engineer
+          I&apos;m Shishir Shetty — an AI &amp; Data Science engineer
           building across software development, cloud, databases,
           data and AI/ML.
         </motion.p>

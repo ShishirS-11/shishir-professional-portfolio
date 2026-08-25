@@ -153,7 +153,7 @@ export default function AdminDashboardPage() {
           <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
             <div>
               <h1 className="text-4xl font-semibold">
-                Welcome back, Shishir.
+                Welcome back, Shishir Shetty.
               </h1>
 
               <p className="mt-3 max-w-2xl text-zinc-500">

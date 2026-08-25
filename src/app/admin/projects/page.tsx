@@ -40,6 +40,8 @@ export default function ProjectsAdminPage() {
 
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState<Project | null>(null);
+  const [projectToDelete, setProjectToDelete] =
+    useState<Project | null>(null);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -108,12 +110,14 @@ export default function ProjectsAdminPage() {
     setGithubUrl("");
     setLiveUrl("");
     setImageUrl("");
+
     setFeatured(false);
     setDisplayOrder(0);
     setIsPublished(true);
 
     setEditing(null);
     setShowForm(false);
+
     setError("");
     setSuccess("");
   }
@@ -223,7 +227,10 @@ export default function ProjectsAdminPage() {
             hint: updateError.hint,
           });
 
-          setError(updateError.message || "Unable to update project.");
+          setError(
+            updateError.message || "Unable to update project."
+          );
+
           setSaving(false);
           return;
         }
@@ -242,7 +249,10 @@ export default function ProjectsAdminPage() {
             hint: insertError.hint,
           });
 
-          setError(insertError.message || "Unable to save project.");
+          setError(
+            insertError.message || "Unable to save project."
+          );
+
           setSaving(false);
           return;
         }
@@ -260,16 +270,15 @@ export default function ProjectsAdminPage() {
     } catch (err) {
       console.error("PROJECT SAVE EXCEPTION:", err);
 
-      setError("Something went wrong while saving the project.");
+      setError(
+        "Something went wrong while saving the project."
+      );
+
       setSaving(false);
     }
   }
 
   async function removeProject(id: string) {
-    if (!confirm("Are you sure you want to delete this project?")) {
-      return;
-    }
-
     setDeleting(id);
     setError("");
     setSuccess("");
@@ -287,7 +296,10 @@ export default function ProjectsAdminPage() {
         hint: deleteError.hint,
       });
 
-      setError(deleteError.message || "Unable to delete project.");
+      setError(
+        deleteError.message || "Unable to delete project."
+      );
+
       setDeleting(null);
       return;
     }
@@ -298,6 +310,7 @@ export default function ProjectsAdminPage() {
 
     setSuccess("Project deleted successfully.");
     setDeleting(null);
+    setProjectToDelete(null);
   }
 
   async function togglePublished(project: Project) {
@@ -322,7 +335,8 @@ export default function ProjectsAdminPage() {
       });
 
       setError(
-        updateError.message || "Unable to update publication status."
+        updateError.message ||
+          "Unable to update publication status."
       );
 
       return;
@@ -340,13 +354,15 @@ export default function ProjectsAdminPage() {
     );
 
     setSuccess(
-      newStatus ? "Project published." : "Project unpublished."
+      newStatus
+        ? "Project published."
+        : "Project unpublished."
     );
   }
 
   return (
     <main>
-      {/* HEADER */}
+      {/* Header */}
       <div className="mb-8 flex flex-col justify-between gap-5 md:flex-row md:items-end">
         <div>
           <p className="text-xs uppercase tracking-[0.2em] text-emerald-400/60">
@@ -372,31 +388,38 @@ export default function ProjectsAdminPage() {
         </button>
       </div>
 
-      {/* ERROR */}
+      {/* Error */}
       {error && (
         <div className="mb-6 rounded-xl border border-red-400/20 bg-red-400/[0.06] px-4 py-3 text-sm text-red-300">
-          <strong className="font-medium">Error:</strong> {error}
+          <strong className="font-medium">
+            Error:
+          </strong>{" "}
+          {error}
         </div>
       )}
 
-      {/* SUCCESS */}
+      {/* Success */}
       {success && (
         <div className="mb-6 rounded-xl border border-emerald-400/20 bg-emerald-400/[0.06] px-4 py-3 text-sm text-emerald-300">
           {success}
         </div>
       )}
 
-      {/* FORM */}
+      {/* Add/Edit Form */}
       {showForm && (
         <div className="mb-8 rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 lg:p-8">
           <div className="mb-7 flex items-center justify-between">
             <div>
               <p className="text-xs uppercase tracking-[0.15em] text-emerald-400/50">
-                {editing ? "Edit existing project" : "New portfolio project"}
+                {editing
+                  ? "Edit existing project"
+                  : "New portfolio project"}
               </p>
 
               <h2 className="mt-1 text-xl font-semibold">
-                {editing ? "Edit Project" : "Add Project"}
+                {editing
+                  ? "Edit Project"
+                  : "Add Project"}
               </h2>
             </div>
 
@@ -410,7 +433,7 @@ export default function ProjectsAdminPage() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            {/* TITLE */}
+            {/* Title */}
             <div>
               <label className="mb-2 block text-xs text-white/40">
                 Project title *
@@ -418,13 +441,15 @@ export default function ProjectsAdminPage() {
 
               <input
                 value={title}
-                onChange={(e) => handleTitleChange(e.target.value)}
+                onChange={(e) =>
+                  handleTitleChange(e.target.value)
+                }
                 placeholder="Agri Vision"
                 className="input"
               />
             </div>
 
-            {/* SLUG */}
+            {/* Slug */}
             <div>
               <label className="mb-2 block text-xs text-white/40">
                 Slug *
@@ -432,13 +457,15 @@ export default function ProjectsAdminPage() {
 
               <input
                 value={slug}
-                onChange={(e) => setSlug(e.target.value)}
+                onChange={(e) =>
+                  setSlug(e.target.value)
+                }
                 placeholder="agri-vision"
                 className="input"
               />
             </div>
 
-            {/* CATEGORY */}
+            {/* Category */}
             <div>
               <label className="mb-2 block text-xs text-white/40">
                 Category
@@ -446,13 +473,15 @@ export default function ProjectsAdminPage() {
 
               <input
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(e) =>
+                  setCategory(e.target.value)
+                }
                 placeholder="AI / ML · IoT"
                 className="input"
               />
             </div>
 
-            {/* SHORT DESCRIPTION */}
+            {/* Short Description */}
             <div>
               <label className="mb-2 block text-xs text-white/40">
                 Short description
@@ -460,13 +489,15 @@ export default function ProjectsAdminPage() {
 
               <input
                 value={shortDescription}
-                onChange={(e) => setShortDescription(e.target.value)}
+                onChange={(e) =>
+                  setShortDescription(e.target.value)
+                }
                 placeholder="A short summary of the project"
                 className="input"
               />
             </div>
 
-            {/* DESCRIPTION */}
+            {/* Description */}
             <div className="md:col-span-2">
               <label className="mb-2 block text-xs text-white/40">
                 Description
@@ -474,14 +505,16 @@ export default function ProjectsAdminPage() {
 
               <textarea
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={(e) =>
+                  setDescription(e.target.value)
+                }
                 placeholder="Detailed project description"
                 rows={4}
                 className="input resize-y"
               />
             </div>
 
-            {/* PROBLEM */}
+            {/* Problem */}
             <div>
               <label className="mb-2 block text-xs text-white/40">
                 Problem
@@ -489,14 +522,16 @@ export default function ProjectsAdminPage() {
 
               <textarea
                 value={problem}
-                onChange={(e) => setProblem(e.target.value)}
+                onChange={(e) =>
+                  setProblem(e.target.value)
+                }
                 placeholder="What problem does this project solve?"
                 rows={4}
                 className="input resize-y"
               />
             </div>
 
-            {/* SOLUTION */}
+            {/* Solution */}
             <div>
               <label className="mb-2 block text-xs text-white/40">
                 Solution
@@ -504,14 +539,16 @@ export default function ProjectsAdminPage() {
 
               <textarea
                 value={solution}
-                onChange={(e) => setSolution(e.target.value)}
+                onChange={(e) =>
+                  setSolution(e.target.value)
+                }
                 placeholder="How does your project solve it?"
                 rows={4}
                 className="input resize-y"
               />
             </div>
 
-            {/* TECHNOLOGIES */}
+            {/* Technologies */}
             <div className="md:col-span-2">
               <label className="mb-2 block text-xs text-white/40">
                 Technologies
@@ -519,7 +556,9 @@ export default function ProjectsAdminPage() {
 
               <input
                 value={technologies}
-                onChange={(e) => setTechnologies(e.target.value)}
+                onChange={(e) =>
+                  setTechnologies(e.target.value)
+                }
                 placeholder="Python, TensorFlow, Raspberry Pi, Supabase"
                 className="input"
               />
@@ -529,7 +568,7 @@ export default function ProjectsAdminPage() {
               </p>
             </div>
 
-            {/* GITHUB */}
+            {/* GitHub */}
             <div>
               <label className="mb-2 block text-xs text-white/40">
                 GitHub URL
@@ -537,13 +576,15 @@ export default function ProjectsAdminPage() {
 
               <input
                 value={githubUrl}
-                onChange={(e) => setGithubUrl(e.target.value)}
+                onChange={(e) =>
+                  setGithubUrl(e.target.value)
+                }
                 placeholder="https://github.com/..."
                 className="input"
               />
             </div>
 
-            {/* LIVE URL */}
+            {/* Live URL */}
             <div>
               <label className="mb-2 block text-xs text-white/40">
                 Live URL
@@ -551,13 +592,15 @@ export default function ProjectsAdminPage() {
 
               <input
                 value={liveUrl}
-                onChange={(e) => setLiveUrl(e.target.value)}
+                onChange={(e) =>
+                  setLiveUrl(e.target.value)
+                }
                 placeholder="https://..."
                 className="input"
               />
             </div>
 
-            {/* IMAGE */}
+            {/* Image URL */}
             <div className="md:col-span-2">
               <label className="mb-2 block text-xs text-white/40">
                 Image URL
@@ -565,13 +608,15 @@ export default function ProjectsAdminPage() {
 
               <input
                 value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
+                onChange={(e) =>
+                  setImageUrl(e.target.value)
+                }
                 placeholder="https://..."
                 className="input"
               />
             </div>
 
-            {/* DISPLAY ORDER */}
+            {/* Display Order */}
             <div>
               <label className="mb-2 block text-xs text-white/40">
                 Display order
@@ -582,19 +627,23 @@ export default function ProjectsAdminPage() {
                 min="0"
                 value={displayOrder}
                 onChange={(e) =>
-                  setDisplayOrder(Number(e.target.value))
+                  setDisplayOrder(
+                    Number(e.target.value)
+                  )
                 }
                 className="input"
               />
             </div>
 
-            {/* OPTIONS */}
+            {/* Options */}
             <div className="flex flex-col justify-end gap-3">
               <label className="flex cursor-pointer items-center gap-3 text-sm text-white/50">
                 <input
                   type="checkbox"
                   checked={featured}
-                  onChange={(e) => setFeatured(e.target.checked)}
+                  onChange={(e) =>
+                    setFeatured(e.target.checked)
+                  }
                   className="h-4 w-4 accent-emerald-400"
                 />
 
@@ -607,7 +656,11 @@ export default function ProjectsAdminPage() {
                 <input
                   type="checkbox"
                   checked={isPublished}
-                  onChange={(e) => setIsPublished(e.target.checked)}
+                  onChange={(e) =>
+                    setIsPublished(
+                      e.target.checked
+                    )
+                  }
                   className="h-4 w-4 accent-emerald-400"
                 />
 
@@ -618,7 +671,7 @@ export default function ProjectsAdminPage() {
             </div>
           </div>
 
-          {/* FORM BUTTONS */}
+          {/* Form Actions */}
           <div className="mt-7 flex flex-wrap gap-3">
             <button
               type="button"
@@ -627,7 +680,10 @@ export default function ProjectsAdminPage() {
               className="flex items-center gap-2 rounded-xl bg-emerald-400 px-6 py-3 font-medium text-black transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-50"
             >
               {saving && (
-                <Loader2 size={17} className="animate-spin" />
+                <Loader2
+                  size={17}
+                  className="animate-spin"
+                />
               )}
 
               {saving
@@ -649,18 +705,24 @@ export default function ProjectsAdminPage() {
         </div>
       )}
 
-      {/* PROJECT LIST */}
+      {/* Project List */}
       {loading ? (
         <div className="flex min-h-[300px] items-center justify-center rounded-2xl border border-white/[0.08]">
           <div className="flex items-center gap-3 text-sm text-white/40">
-            <Loader2 size={18} className="animate-spin" />
+            <Loader2
+              size={18}
+              className="animate-spin"
+            />
             Loading projects...
           </div>
         </div>
       ) : projects.length === 0 ? (
         <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] px-6 py-16 text-center">
           <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.02]">
-            <Plus size={22} className="text-white/25" />
+            <Plus
+              size={22}
+              className="text-white/25"
+            />
           </div>
 
           <h3 className="mt-5 text-lg font-medium">
@@ -668,7 +730,8 @@ export default function ProjectsAdminPage() {
           </h3>
 
           <p className="mt-2 text-sm text-white/35">
-            Add your first project to start building your portfolio.
+            Add your first project to start building
+            your portfolio.
           </p>
 
           <button
@@ -734,19 +797,21 @@ export default function ProjectsAdminPage() {
 
                   {project.technologies?.length > 0 && (
                     <div className="mt-3 flex flex-wrap gap-2">
-                      {project.technologies.map((technology) => (
-                        <span
-                          key={technology}
-                          className="rounded-full bg-white/[0.04] px-2.5 py-1 text-[11px] text-white/35"
-                        >
-                          {technology}
-                        </span>
-                      ))}
+                      {project.technologies.map(
+                        (technology) => (
+                          <span
+                            key={technology}
+                            className="rounded-full bg-white/[0.04] px-2.5 py-1 text-[11px] text-white/35"
+                          >
+                            {technology}
+                          </span>
+                        )
+                      )}
                     </div>
                   )}
                 </div>
 
-                {/* ACTIONS */}
+                {/* Actions */}
                 <div className="flex shrink-0 flex-wrap items-center gap-2">
                   {project.github_url && (
                     <a
@@ -774,7 +839,9 @@ export default function ProjectsAdminPage() {
 
                   <button
                     type="button"
-                    onClick={() => togglePublished(project)}
+                    onClick={() =>
+                      togglePublished(project)
+                    }
                     className="rounded-lg border border-white/[0.08] px-3 py-2 text-xs text-white/45 transition hover:bg-white/[0.04] hover:text-white"
                   >
                     {project.is_published
@@ -784,7 +851,9 @@ export default function ProjectsAdminPage() {
 
                   <button
                     type="button"
-                    onClick={() => editProject(project)}
+                    onClick={() =>
+                      editProject(project)
+                    }
                     className="rounded-lg border border-white/[0.08] p-2 text-white/45 transition hover:bg-white/[0.04] hover:text-white"
                     title="Edit"
                   >
@@ -793,8 +862,12 @@ export default function ProjectsAdminPage() {
 
                   <button
                     type="button"
-                    onClick={() => removeProject(project.id)}
-                    disabled={deleting === project.id}
+                    onClick={() =>
+                      setProjectToDelete(project)
+                    }
+                    disabled={
+                      deleting === project.id
+                    }
                     className="rounded-lg border border-red-400/10 p-2 text-red-400/60 transition hover:bg-red-400/[0.05] hover:text-red-400 disabled:opacity-50"
                     title="Delete"
                   >
@@ -811,6 +884,62 @@ export default function ProjectsAdminPage() {
               </div>
             </article>
           ))}
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {projectToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl border border-white/[0.08] bg-[#0a0d0c] p-6 shadow-2xl">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-400/[0.08] text-red-400">
+              <Trash2 size={21} />
+            </div>
+
+            <h2 className="mt-5 text-xl font-semibold text-white">
+              Delete project?
+            </h2>
+
+            <p className="mt-2 text-sm leading-6 text-white/40">
+              Are you sure you want to delete{" "}
+              <span className="font-medium text-white/70">
+                "{projectToDelete.title}"
+              </span>
+              ? This action cannot be undone.
+            </p>
+
+            <div className="mt-7 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() =>
+                  setProjectToDelete(null)
+                }
+                disabled={deleting !== null}
+                className="rounded-xl border border-white/[0.08] px-5 py-3 text-sm text-white/50 transition hover:bg-white/[0.04] hover:text-white disabled:opacity-50"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  removeProject(projectToDelete.id)
+                }
+                disabled={deleting !== null}
+                className="flex items-center gap-2 rounded-xl bg-red-500 px-5 py-3 text-sm font-medium text-white transition hover:bg-red-400 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {deleting !== null && (
+                  <Loader2
+                    size={16}
+                    className="animate-spin"
+                  />
+                )}
+
+                {deleting !== null
+                  ? "Deleting..."
+                  : "Delete Project"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </main>
