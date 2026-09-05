@@ -13,29 +13,18 @@ import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
-    <main className="min-h-screen overflow-hidden bg-[#050807] text-[#F5F7F6]">
+    <main id="top" className="min-h-screen overflow-hidden bg-[#f5f5f7] text-[#1d1d1f]">
       <Navbar />
-
       <Hero />
-
       <About />
-
       <CareerFocus />
-
       <Projects />
-
       <Skills />
-
       <Experience />
-
       <Education />
-
       <Certifications />
-
       <Achievements />
-
       <Contact />
-
       <Footer />
     </main>
   );
