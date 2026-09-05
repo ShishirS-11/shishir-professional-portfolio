@@ -2,31 +2,36 @@
 
 /* =========================================================
    SHISHIR PORTFOLIO — GLOBAL DESIGN SYSTEM
-   Dark / warm / editorial / understated
+   Dark / colorful / polished / understated
    ========================================================= */
 
 :root {
-  --background: #0a0a09;
-  --foreground: #f3f2ee;
+  --background: #080b14;
+  --foreground: #f5f7fb;
 
-  --surface: #11110f;
-  --surface-raised: #151513;
-  --surface-soft: #0e0e0c;
+  --surface: #0e1422;
+  --surface-raised: #131b2d;
+  --surface-soft: #0b111e;
 
-  --text-primary: #f3f2ee;
-  --text-secondary: #aaa9a2;
-  --text-muted: #77766f;
-  --text-faint: #56554f;
+  --text-primary: #f5f7fb;
+  --text-secondary: #aeb8ca;
+  --text-muted: #7d879a;
+  --text-faint: #586276;
 
-  --accent: #69c7a0;
-  --accent-soft: rgba(105, 199, 160, 0.1);
-  --accent-border: rgba(105, 199, 160, 0.18);
+  --accent: #5eead4;
+  --accent-strong: #2dd4bf;
+  --accent-soft: rgba(45, 212, 191, 0.09);
+  --accent-border: rgba(94, 234, 212, 0.2);
 
-  --border: rgba(255, 255, 255, 0.085);
-  --border-soft: rgba(255, 255, 255, 0.055);
+  --violet: #a78bfa;
+  --blue: #60a5fa;
+  --rose: #fb7185;
 
-  --danger: #e87878;
-  --warning: #d9b85b;
+  --border: rgba(148, 163, 184, 0.13);
+  --border-soft: rgba(148, 163, 184, 0.08);
+
+  --danger: #f87171;
+  --warning: #facc15;
 
   --radius-sm: 8px;
   --radius-md: 12px;
@@ -52,30 +57,20 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-
   background:
-    radial-gradient(
-      circle at 50% -20%,
-      rgba(105, 199, 160, 0.045),
-      transparent 38%
-    ),
-    var(--background);
-
+    radial-gradient(circle at 12% 8%, rgba(96, 165, 250, 0.075), transparent 28%),
+    radial-gradient(circle at 88% 18%, rgba(167, 139, 250, 0.065), transparent 26%),
+    radial-gradient(circle at 50% 55%, rgba(45, 212, 191, 0.035), transparent 34%),
+    linear-gradient(180deg, #080b14 0%, #090d17 48%, #080b13 100%);
   color: var(--foreground);
-
-  font-family:
-    Arial,
-    Helvetica,
-    sans-serif;
-
+  font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
   text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: rgba(105, 199, 160, 0.2);
+  background: rgba(94, 234, 212, 0.22);
   color: #ffffff;
 }
 
@@ -88,30 +83,26 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0a0a09;
+  background: #080b14;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
+  background: linear-gradient(180deg, rgba(94, 234, 212, 0.35), rgba(167, 139, 250, 0.35));
   border-radius: 999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: linear-gradient(180deg, rgba(94, 234, 212, 0.55), rgba(167, 139, 250, 0.55));
 }
 
 /* =========================================================
-   LINKS
+   LINKS / BUTTONS
    ========================================================= */
 
 a {
   color: inherit;
   text-decoration: none;
 }
-
-/* =========================================================
-   BUTTONS
-   ========================================================= */
 
 button {
   font: inherit;
@@ -137,35 +128,23 @@ select {
 
 .input {
   width: 100%;
-
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
-
-  background: rgba(255, 255, 255, 0.025);
-
+  background: rgba(14, 20, 34, 0.78);
   padding: 0.8rem 1rem;
-
   color: var(--text-primary);
-
   outline: none;
-
-  transition:
-    border-color 180ms ease,
-    background-color 180ms ease,
-    box-shadow 180ms ease;
+  transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 
 .input:hover {
-  border-color: rgba(255, 255, 255, 0.13);
+  border-color: rgba(148, 163, 184, 0.2);
 }
 
 .input:focus {
   border-color: var(--accent-border);
-
-  background: rgba(255, 255, 255, 0.035);
-
-  box-shadow:
-    0 0 0 3px rgba(105, 199, 160, 0.055);
+  background: rgba(19, 27, 45, 0.9);
+  box-shadow: 0 0 0 3px rgba(94, 234, 212, 0.055), 0 10px 35px rgba(0, 0, 0, 0.12);
 }
 
 .input::placeholder {
@@ -188,14 +167,14 @@ select.input {
 }
 
 select.input option {
-  background: #11110f;
+  background: #101725;
   color: var(--text-primary);
 }
 
 input[type="checkbox"] {
   width: 16px;
   height: 16px;
-  accent-color: var(--accent);
+  accent-color: var(--accent-strong);
   cursor: pointer;
 }
 
@@ -213,29 +192,24 @@ input[type="number"].input::-webkit-outer-spin-button {
    ========================================================= */
 
 .admin-surface {
-  background: var(--surface);
-
+  background:
+    linear-gradient(145deg, rgba(19, 27, 45, 0.88), rgba(10, 15, 27, 0.94));
   border: 1px solid var(--border);
-
   border-radius: var(--radius-lg);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.18);
 }
 
 .admin-card {
-  background: var(--surface-soft);
-
+  background: linear-gradient(145deg, rgba(19, 27, 45, 0.72), rgba(10, 15, 27, 0.7));
   border: 1px solid var(--border-soft);
-
   border-radius: var(--radius-lg);
-
-  transition:
-    border-color 180ms ease,
-    background-color 180ms ease,
-    transform 180ms ease;
+  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
 }
 
 .admin-card:hover {
-  border-color: rgba(255, 255, 255, 0.11);
-  background: var(--surface-raised);
+  border-color: rgba(94, 234, 212, 0.16);
+  background: linear-gradient(145deg, rgba(22, 32, 53, 0.86), rgba(11, 18, 31, 0.82));
+  box-shadow: 0 14px 42px rgba(0, 0, 0, 0.16);
 }
 
 /* =========================================================
@@ -243,79 +217,57 @@ input[type="number"].input::-webkit-outer-spin-button {
    ========================================================= */
 
 .tech-card {
+  position: relative;
   background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.025),
-      rgba(255, 255, 255, 0.012)
-    );
+    linear-gradient(145deg, rgba(18, 27, 45, 0.84), rgba(10, 15, 27, 0.86));
+  border: 1px solid rgba(148, 163, 184, 0.11);
+  box-shadow: 0 14px 45px rgba(0, 0, 0, 0.16);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: border-color 220ms ease, background-color 220ms ease, box-shadow 220ms ease, transform 220ms ease;
+}
 
-  border: 1px solid var(--border-soft);
-
-  box-shadow:
-    0 10px 35px rgba(0, 0, 0, 0.12);
-
-  transition:
-    border-color 220ms ease,
-    background-color 220ms ease,
-    box-shadow 220ms ease,
-    transform 220ms ease;
+.tech-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(120deg, rgba(94, 234, 212, 0.035), transparent 38%, rgba(167, 139, 250, 0.035));
 }
 
 .tech-card:hover {
-  border-color: rgba(255, 255, 255, 0.11);
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0.035),
-      rgba(255, 255, 255, 0.016)
-    );
-
-  box-shadow:
-    0 16px 45px rgba(0, 0, 0, 0.18);
+  border-color: rgba(94, 234, 212, 0.18);
+  background: linear-gradient(145deg, rgba(21, 32, 53, 0.9), rgba(11, 18, 31, 0.9));
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22), 0 0 40px rgba(94, 234, 212, 0.035);
+  transform: translateY(-2px);
 }
 
 /* =========================================================
-   QUIET ACCENT
+   QUIET ACCENTS
    ========================================================= */
 
 .emerald-glow {
-  box-shadow:
-    0 0 45px rgba(105, 199, 160, 0.055);
+  box-shadow: 0 0 55px rgba(94, 234, 212, 0.07);
 }
 
 .emerald-text-glow {
-  text-shadow:
-    0 0 24px rgba(105, 199, 160, 0.12);
+  text-shadow: 0 0 24px rgba(94, 234, 212, 0.14);
 }
 
 /* =========================================================
    BACKGROUND TEXTURES
-   Extremely subtle — never dominant
    ========================================================= */
 
 .background-grid {
   background-image:
-    linear-gradient(
-      rgba(255, 255, 255, 0.018) 1px,
-      transparent 1px
-    ),
-    linear-gradient(
-      90deg,
-      rgba(255, 255, 255, 0.018) 1px,
-      transparent 1px
-    );
-
+    linear-gradient(rgba(148, 163, 184, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.018) 1px, transparent 1px);
   background-size: 64px 64px;
 }
 
 .background-dots {
-  background-image: radial-gradient(
-    rgba(255, 255, 255, 0.055) 1px,
-    transparent 1px
-  );
-
+  background-image: radial-gradient(rgba(94, 234, 212, 0.065) 1px, transparent 1px);
   background-size: 28px 28px;
 }
 
@@ -336,22 +288,18 @@ input[type="number"].input::-webkit-outer-spin-button {
    ========================================================= */
 
 :focus-visible {
-  outline: 1px solid rgba(105, 199, 160, 0.65);
+  outline: 1px solid rgba(94, 234, 212, 0.7);
   outline-offset: 3px;
 }
 
 /* =========================================================
-   IMAGES
+   IMAGES / HR
    ========================================================= */
 
 img {
   max-width: 100%;
   height: auto;
 }
-
-/* =========================================================
-   HR
-   ========================================================= */
 
 hr {
   border: 0;
@@ -387,7 +335,6 @@ hr {
   }
 
   .tech-card {
-    box-shadow:
-      0 8px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 9px 28px rgba(0, 0, 0, 0.13);
   }
 }
