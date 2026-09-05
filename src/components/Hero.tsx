@@ -32,10 +32,10 @@ export default function Hero() {
           </motion.p>
 
           <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7, delay: .34 }} className="mt-9 flex flex-wrap gap-3">
-            <a href="#projects" className="group inline-flex items-center gap-3 rounded-full bg-[#101426] px-6 py-3.5 text-sm font-semibold text-[#f7f8ff] shadow-[0_14px_30px_rgba(16,20,38,.18)] transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(16,20,38,.23)]">
+            <a href="#projects" className="group inline-flex items-center gap-3 rounded-full bg-[#101426] px-6 py-3.5 text-sm font-semibold !text-white shadow-[0_14px_30px_rgba(16,20,38,.18)] transition hover:-translate-y-1 hover:shadow-[0_18px_40px_rgba(16,20,38,.23)]">
               View my work <ArrowUpRight size={17} className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
             </a>
-            <a href="mailto:shishirshetty945@gmail.com" className="inline-flex items-center gap-2 rounded-full border border-black/8 bg-white/70 px-6 py-3.5 text-sm font-medium text-[#283149] shadow-sm backdrop-blur transition hover:-translate-y-1 hover:bg-white">
+            <a href="mailto:shishirshetty945@gmail.com" className="group inline-flex items-center gap-2 rounded-full bg-[#101426] px-6 py-3.5 text-sm font-semibold !text-white shadow-[0_14px_30px_rgba(16,20,38,.16)] transition hover:-translate-y-1 hover:bg-[#05070d] hover:shadow-[0_18px_40px_rgba(16,20,38,.23)]">
               Let&apos;s talk <ArrowUpRight size={17} />
             </a>
             <a href="https://github.com/ShishirS-11" target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-black/8 bg-white/60 px-4 py-3.5 text-sm text-[#59627a] transition hover:bg-white hover:text-[#101426]"><FaGithub size={17} /> GitHub</a>
