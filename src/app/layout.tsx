@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./public-motion.css";
 
 export const metadata: Metadata = {
   title: "Shishir Shetty | Software · Cloud · Data · AI",
