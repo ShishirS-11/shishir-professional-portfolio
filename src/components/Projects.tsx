@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowUpRight, CloudSun, FileText, LayoutDashboard } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 import { createClient } from "@/lib/supabase/client";
 
@@ -21,10 +21,92 @@ type Project = {
   display_order: number;
 };
 
-function ProjectVisual({ index, title }: { index: number; title: string }) {
-  if (index % 3 === 1) return <div className="relative h-56 overflow-hidden bg-gradient-to-br from-[#111a42] via-[#2d2b68] to-[#6950aa]"><div className="absolute -left-10 top-10 h-36 w-36 rounded-full bg-blue-400/20 blur-2xl" /><div className="absolute right-10 top-8 h-24 w-24 rounded-full bg-violet-300/20 blur-2xl" /><div className="absolute left-1/2 top-1/2 w-[78%] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/15 bg-white/10 p-5 backdrop-blur-xl float-soft"><div className="flex items-center justify-between text-white"><CloudSun size={38} strokeWidth={1.2} /><span className="text-4xl font-semibold">24°</span></div><p className="mt-4 text-xs text-white/60">Real-time weather insights</p><div className="mt-5 flex gap-2">{["MON","TUE","WED","THU","FRI"].map((d,i)=><span key={d} className="rounded-lg bg-white/10 px-2 py-1 text-[9px] text-white/65" style={{ opacity: .55 + i * .1 }}>{d}</span>)}</div></div><div className="absolute right-8 bottom-8 h-3 w-3 rounded-full bg-blue-300 ambient-orb" /></div>;
-  if (index % 3 === 2) return <div className="relative h-56 overflow-hidden bg-gradient-to-br from-[#edf6ff] via-white to-[#f5eaff]"><div className="absolute right-[-10px] top-5 h-44 w-44 rounded-full bg-violet-300/30 blur-3xl" /><div className="absolute left-1/2 top-1/2 h-44 w-[76%] -translate-x-1/2 -translate-y-1/2 rounded-[28px] border border-white bg-white/75 p-5 shadow-[0_20px_50px_rgba(80,80,150,.12)] float-soft"><div className="flex items-center gap-2 text-xs font-semibold text-[#303a58]"><FileText size={18} className="text-violet-500" /> {title}</div><div className="mt-5 space-y-3"><span className="block h-2 w-[85%] rounded-full bg-[#dfe7f7]" /><span className="block h-2 w-[65%] rounded-full bg-[#e9defd]" /><span className="block h-10 rounded-xl bg-gradient-to-r from-blue-100 to-violet-100" /></div></div><div className="absolute left-10 bottom-8 h-4 w-4 rounded-full bg-pink-300 ambient-orb-slow" /></div>;
-  return <div className="relative h-56 overflow-hidden bg-gradient-to-br from-[#e7f7ff] via-[#eef4ff] to-[#e8fff6]"><div className="absolute left-[-20px] top-[-30px] h-48 w-48 rounded-full bg-cyan-300/25 blur-3xl" /><div className="absolute right-[-30px] bottom-[-40px] h-56 w-56 rounded-full bg-emerald-300/25 blur-3xl" /><div className="absolute left-1/2 top-1/2 w-[78%] -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-white/90 bg-white/75 p-4 shadow-[0_20px_50px_rgba(40,100,140,.13)] float-soft"><div className="flex items-center gap-2"><LayoutDashboard size={17} className="text-blue-600" /><span className="text-xs font-semibold text-[#303a58]">{title}</span></div><div className="mt-4 grid grid-cols-[.65fr_1.35fr] gap-3"><div className="rounded-xl bg-[#edf2fb] p-3 space-y-2"><span className="block h-2 w-12 rounded bg-blue-200" /><span className="block h-2 w-16 rounded bg-slate-200" /><span className="block h-2 w-10 rounded bg-slate-200" /></div><div className="rounded-xl bg-gradient-to-br from-blue-50 to-emerald-50 p-3"><span className="block h-3 w-20 rounded bg-blue-200/70" /><span className="mt-3 block h-7 rounded-lg bg-white/90" /><span className="mt-2 block h-7 rounded-lg bg-white/80" /></div></div></div><div className="absolute right-[14%] top-[20%] h-3 w-3 rounded-full bg-blue-400 ambient-orb" /></div>;
+function AgriVisionVisual() {
+  return (
+    <div className="project-visual project-visual-agri">
+      <div className="agri-sun" />
+      <div className="agri-scan" />
+      <div className="agri-cloud agri-cloud-one" />
+      <div className="agri-cloud agri-cloud-two" />
+      <div className="agri-field">
+        {Array.from({ length: 7 }).map((_, i) => (
+          <span key={i} className="agri-row" style={{ left: `${8 + i * 13}%`, animationDelay: `${i * .18}s` }} />
+        ))}
+      </div>
+      <div className="agri-drone">
+        <span className="drone-arm" /><span className="drone-body" /><span className="drone-light" />
+      </div>
+      <div className="agri-data-chip">AI CROP SCAN <b>98%</b></div>
+    </div>
+  );
+}
+
+function LyricalLinkVisual() {
+  return (
+    <div className="project-visual project-visual-lyrics">
+      <div className="lyrics-glow" />
+      <div className="lyrics-disc"><span>♪</span></div>
+      <div className="lyrics-wave">
+        {Array.from({ length: 24 }).map((_, i) => <i key={i} style={{ animationDelay: `${i * .07}s`, height: `${18 + ((i * 17) % 54)}%` }} />)}
+      </div>
+      <div className="lyrics-card">
+        <span className="lyrics-label">NOW PLAYING</span>
+        <strong>Words become music</strong>
+        <small>Synced lyrics • Connected moments</small>
+      </div>
+      <div className="lyrics-note note-one">♪</div><div className="lyrics-note note-two">♫</div>
+    </div>
+  );
+}
+
+function BudgetWiseVisual() {
+  return (
+    <div className="project-visual project-visual-budget">
+      <div className="budget-orb" />
+      <div className="budget-phone">
+        <div className="budget-top"><span>Budget Wise</span><b>₹24,850</b></div>
+        <div className="budget-chart"><div className="budget-ring"><span>72%</span></div><div className="budget-bars"><i /><i /><i /><i /></div></div>
+        <div className="budget-lines"><span /><span /><span /></div>
+      </div>
+      <div className="budget-float budget-save">+ ₹4,200 saved</div>
+      <div className="budget-float budget-food">Food <b>₹3,240</b></div>
+      <div className="budget-coin coin-one">₹</div><div className="budget-coin coin-two">₹</div>
+    </div>
+  );
+}
+
+function ShoeStoreVisual() {
+  return (
+    <div className="project-visual project-visual-shoes">
+      <div className="shoe-glow" />
+      <div className="shoe-platform" />
+      <div className="sneaker">
+        <span className="shoe-upper" /><span className="shoe-lace lace-one" /><span className="shoe-lace lace-two" /><span className="shoe-sole" /><span className="shoe-mark">S</span>
+      </div>
+      <div className="shoe-stock"><span>IN STOCK</span><b>128 pairs</b></div>
+      <div className="shoe-price">₹4,999</div>
+      <div className="shoe-dot dot-one" /><div className="shoe-dot dot-two" />
+    </div>
+  );
+}
+
+function GenericProjectVisual({ title }: { title: string }) {
+  return (
+    <div className="project-visual project-visual-generic">
+      <div className="generic-orb" />
+      <div className="generic-window"><span /><span /><span /><div className="generic-lines"><i /><i /><i /><i /></div></div>
+      <p>{title}</p>
+    </div>
+  );
+}
+
+function ProjectVisual({ title }: { title: string }) {
+  const normalized = title.toLowerCase();
+  if (normalized.includes("agri") || normalized.includes("agriculture")) return <AgriVisionVisual />;
+  if (normalized.includes("lyrical") || normalized.includes("lyric")) return <LyricalLinkVisual />;
+  if (normalized.includes("budget") || normalized.includes("finance") || normalized.includes("expense")) return <BudgetWiseVisual />;
+  if (normalized.includes("shoe") || normalized.includes("footwear")) return <ShoeStoreVisual />;
+  return <GenericProjectVisual title={title} />;
 }
 
 export default function Projects() {
@@ -53,7 +135,7 @@ export default function Projects() {
           <div className="grid gap-6 lg:grid-cols-3">
             {projects.map((project, index) => (
               <motion.article key={project.id} initial={{ opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .15 }} transition={{ duration: .65, delay: index * .08 }} className="tech-card group rounded-[28px]">
-                <ProjectVisual index={index} title={project.title} />
+                <ProjectVisual title={project.title} />
                 <div className="p-6 md:p-7">
                   <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-[.16em] text-blue-600/80">{project.category || "Project"}</p><h3 className="mt-2 text-2xl font-semibold tracking-tight">{project.title}</h3></div><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f1f5ff] transition group-hover:bg-[#101426] group-hover:text-white"><ArrowUpRight size={17} /></span></div>
                   <p className="mt-4 text-sm leading-7 text-[#687187]">{project.short_description || project.description}</p>
