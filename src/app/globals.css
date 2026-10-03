@@ -212,6 +212,36 @@ body:has(#top) .bg-\[\#101426\] * { color: #fff !important; }
 body:has(#top) .group:hover .group-hover\:text-white { color: #fff !important; }
 body:has(#top) a[href="#contact"] { color: #fff !important; }
 
+/* Keep every admin editor in the same bright visual system as the public site. */
+.admin-experience .admin-content .text-white {
+  color: #101426 !important;
+}
+
+.admin-experience .admin-content [class*="text-white/"] {
+  color: #667085 !important;
+}
+
+.admin-experience .admin-content [class*="text-emerald-"] {
+  color: #147efb !important;
+}
+
+.admin-experience .admin-content [class*="border-emerald-"] {
+  border-color: rgba(20, 126, 251, 0.2) !important;
+}
+
+.admin-experience .admin-content [class*="bg-emerald-"] {
+  background-color: rgba(20, 126, 251, 0.08) !important;
+}
+
+.admin-experience .admin-content [class*="accent-emerald-"] {
+  accent-color: #147efb;
+}
+
+.admin-experience .admin-content .bg-\[\#0a0d0c\],
+.admin-experience .admin-content .bg-\[\#050807\] {
+  background: rgba(255, 255, 255, 0.95) !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }

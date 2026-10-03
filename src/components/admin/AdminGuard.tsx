@@ -38,6 +38,14 @@ export default function AdminGuard({
         return;
       }
 
+      if (user.app_metadata?.role !== "admin") {
+        await supabase.auth.signOut();
+        setAuthenticated(false);
+        setChecking(false);
+        router.replace("/admin/login");
+        return;
+      }
+
       setAuthenticated(true);
       setChecking(false);
     }

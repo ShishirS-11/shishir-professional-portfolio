@@ -10,7 +10,7 @@ import {
 export async function updateSession(
   request: NextRequest
 ) {
-  let supabaseResponse = NextResponse.next({
+  const supabaseResponse = NextResponse.next({
     request,
   });
 
@@ -52,10 +52,13 @@ export async function updateSession(
   const isLoginPage =
     pathname === "/admin/login";
 
+  const isAdmin =
+    user?.app_metadata?.role === "admin";
+
   if (
     isAdminRoute &&
     !isLoginPage &&
-    !user
+    !isAdmin
   ) {
     const url = request.nextUrl.clone();
 
@@ -64,7 +67,7 @@ export async function updateSession(
     return NextResponse.redirect(url);
   }
 
-  if (isLoginPage && user) {
+  if (isLoginPage && isAdmin) {
     const url = request.nextUrl.clone();
 
     url.pathname = "/admin/dashboard";

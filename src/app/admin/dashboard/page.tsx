@@ -138,33 +138,34 @@ export default function AdminDashboardPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-[#050807] px-6 py-10 lg:px-10">
-      <div className="mx-auto max-w-7xl">
+    <section className="pb-8">
+      <div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-10"
         >
-          <div className="mb-3 flex items-center gap-2 text-sm text-emerald-400">
+          <div className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[#147efb]/70">
             <Sparkles size={16} />
             Portfolio Control Center
           </div>
 
           <div className="flex flex-col justify-between gap-5 md:flex-row md:items-end">
             <div>
-              <h1 className="text-4xl font-semibold">
-                Welcome back, Shishir Shetty.
+              <h1 className="max-w-3xl text-4xl font-semibold leading-[0.95] tracking-[-0.04em] text-[#101426] sm:text-5xl md:text-6xl">
+                Shape the work
+                <span className="text-slate-400"> people see.</span>
               </h1>
 
-              <p className="mt-3 max-w-2xl text-zinc-500">
-                Manage your portfolio content from one place.
+              <p className="mt-5 max-w-xl text-base leading-7 text-slate-500">
+                Your portfolio content, organized into the same clear story your visitors experience.
               </p>
             </div>
 
             <Link
               href="/"
               target="_blank"
-              className="flex w-fit items-center gap-2 rounded-xl border border-white/10 px-4 py-3 text-sm text-zinc-400 transition hover:border-emerald-400/30 hover:text-emerald-300"
+              className="flex w-fit items-center gap-2 rounded-full border border-[#147efb]/25 bg-[#147efb]/[0.06] px-5 py-3 text-sm text-[#147efb] transition hover:bg-[#147efb]/[0.12]"
             >
               View Portfolio
               <ArrowUpRight size={16} />
@@ -178,7 +179,7 @@ export default function AdminDashboardPage() {
           </div>
         )}
 
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-3 border-t border-slate-200 pt-6 sm:grid-cols-2 xl:grid-cols-3">
           {cards.map((card, index) => {
             const Icon = card.icon;
 
@@ -191,24 +192,24 @@ export default function AdminDashboardPage() {
               >
                 <Link
                   href={card.href}
-                  className="group block rounded-2xl border border-white/10 bg-white/[0.025] p-6 transition hover:-translate-y-1 hover:border-emerald-400/30"
+                  className="tech-card group block rounded-2xl p-6 transition hover:-translate-y-1"
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-400/10 text-emerald-400">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-full border border-[#147efb]/15 bg-[#147efb]/[0.07] text-[#147efb]">
                       <Icon size={20} />
                     </div>
 
                     <ArrowUpRight
                       size={17}
-                      className="text-zinc-700 transition group-hover:text-emerald-400"
+                      className="text-slate-300 transition group-hover:text-[#147efb]"
                     />
                   </div>
 
-                  <p className="mt-6 text-sm text-zinc-500">
+                  <p className="mt-6 text-sm text-slate-500">
                     {card.label}
                   </p>
 
-                  <p className="mt-1 text-4xl font-semibold">
+                  <p className="mt-1 text-4xl font-semibold text-[#101426]">
                     {loading ? "..." : card.value}
                   </p>
                 </Link>
@@ -217,6 +218,6 @@ export default function AdminDashboardPage() {
           })}
         </div>
       </div>
-    </main>
+    </section>
   );
 }
