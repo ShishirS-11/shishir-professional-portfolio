@@ -123,7 +123,7 @@
 .vhs-detail-bottom { display:flex; justify-content:space-between; align-items:center; gap:15px; border-top:1px solid rgba(23,23,21,.25); padding-top:15px; color:#77736a; font-size:8px; }
 .vhs-detail-bottom button { display:flex; align-items:center; gap:8px; border:0; background:transparent; color:var(--vhs-blue); font:inherit; letter-spacing:inherit; }
 
-@keyframes vhs-backdrop-in { from { opacity:0; } to { opacity:1; } }
+@keyframes vhs-backdrop-in { from { clip-path:inset(100% 0 0); } to { clip-path:inset(0 0 0); } }
 @keyframes vhs-sheet-in { from { clip-path:inset(8% 12% 8% 12%); transform:rotate(-2deg) scale(.92); } to { clip-path:inset(0 0 0 0); transform:rotate(0) scale(1); } }
 
 @media (pointer:fine) {
