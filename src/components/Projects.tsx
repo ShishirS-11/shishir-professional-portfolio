@@ -1,22 +1,23 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-import type { CSSProperties, PointerEvent, TouchEvent } from "react";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import {
   ArrowUpRight,
-  ChevronLeft,
-  ChevronRight,
-  X,
   BarChart3,
   Cloud,
+  CloudSun,
   Cpu,
   Database,
+  FileText,
   Headphones,
   Leaf,
   LineChart,
+  Music2,
   Package,
   ScanLine,
   ShoppingBag,
+  Smartphone,
   Sparkles,
   WalletCards,
   Waves,
@@ -156,204 +157,42 @@ function ProjectVisual({ project, index }: { project: Project; index: number }) 
 export default function Projects() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeCategory, setActiveCategory] = useState("ALL");
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [detailOpen, setDetailOpen] = useState(false);
-  const cursorRef = useRef<HTMLDivElement>(null);
-  const touchStartX = useRef<number | null>(null);
 
   useEffect(() => {
-    let mounted = true;
     async function load() {
       const supabase = createClient();
       const { data, error } = await supabase.from("projects").select("*").eq("is_published", true).order("display_order");
-      if (mounted && !error) setProjects((data as Project[]) || []);
-      if (mounted) setLoading(false);
+      if (!error) setProjects((data as Project[]) || []);
+      setLoading(false);
     }
     load();
-    return () => { mounted = false; };
   }, []);
 
-  const categories = useMemo(
-    () => ["ALL", ...Array.from(new Set(projects.map((p) => p.category?.trim()).filter((v): v is string => Boolean(v))))],
-    [projects]
-  );
-  const visibleProjects = useMemo(
-    () => activeCategory === "ALL" ? projects : projects.filter((p) => p.category?.trim() === activeCategory),
-    [projects, activeCategory]
-  );
-  const activeProject = visibleProjects[activeIndex] ?? null;
-
-  useEffect(() => { setActiveIndex(0); }, [activeCategory]);
-
-  useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") { setDetailOpen(false); return; }
-      if (detailOpen || !visibleProjects.length) return;
-      const section = document.getElementById("projects");
-      if (!section?.contains(document.activeElement)) return;
-      if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        setActiveIndex((current) => (current - 1 + visibleProjects.length) % visibleProjects.length);
-      } else if (event.key === "ArrowRight") {
-        event.preventDefault();
-        setActiveIndex((current) => (current + 1) % visibleProjects.length);
-      }
-    }
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [detailOpen, visibleProjects.length]);
-
-  function move(direction: number) {
-    if (!visibleProjects.length) return;
-    setActiveIndex((current) => (current + direction + visibleProjects.length) % visibleProjects.length);
-  }
-
-  function trackCursor(event: PointerEvent<HTMLElement>) {
-    if (!cursorRef.current || event.pointerType !== "mouse") return;
-    cursorRef.current.style.setProperty("--cursor-x", String(event.clientX) + "px");
-    cursorRef.current.style.setProperty("--cursor-y", String(event.clientY) + "px");
-    const target = event.target as HTMLElement;
-    cursorRef.current.dataset.mode = target.closest("[data-cursor='open']") ? "open" : target.closest("[data-cursor='spine']") ? "spine" : "default";
-  }
-
-  function handleTouchEnd(event: TouchEvent<HTMLElement>) {
-    if (touchStartX.current === null) return;
-    const delta = event.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(delta) > 45) move(delta < 0 ? 1 : -1);
-    touchStartX.current = null;
-  }
-
   return (
-    <section id="projects" tabIndex={0} aria-label="Project filmography shelf"
-      className="vhs-projects relative overflow-hidden px-5 pb-24 pt-24 outline-none md:px-10 md:pb-32 md:pt-32"
-      onPointerMove={trackCursor}
-      onPointerLeave={() => { if (cursorRef.current) cursorRef.current.dataset.mode = "default"; }}
-      onTouchStart={(event) => { touchStartX.current = event.touches[0].clientX; }}
-      onTouchEnd={handleTouchEnd}>
-      <div className="vhs-grain" aria-hidden="true" />
-      <div ref={cursorRef} className="vhs-cursor" aria-hidden="true"><span>OPEN</span><span>開く</span></div>
+    <section id="projects" className="px-6 py-24 md:px-10 md:py-32">
+      <div className="mx-auto max-w-7xl">
+        <motion.div initial={{ opacity: 0, y: 25 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: .7 }} className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end">
+          <div><p className="mb-3 text-sm font-semibold uppercase tracking-[.2em] text-blue-600">Featured projects</p><h2 className="text-4xl font-semibold tracking-[-.045em] md:text-6xl">Some things I&apos;ve built.</h2></div>
+          <p className="max-w-md text-base leading-7 text-[#687187]">A mix of AI, software, data and hardware projects — each built around a practical problem.</p>
+        </motion.div>
 
-      <div className="relative z-10 mx-auto max-w-[1500px]">
-        <header className="vhs-topbar">
-          <a href="#top" className="vhs-label vhs-back">BACK / 戻る</a>
-          <div className="vhs-brand" aria-label="Shishir Shetty portfolio"><span className="vhs-brand-mark">SS</span><span>SHISHIR SHETTY</span></div>
-          <p className="vhs-label vhs-career">SELECTED WORKS · 2024—2026</p>
-        </header>
-
-        <div className="vhs-heading">
-          <p className="vhs-eyebrow">A PERSONAL ARCHIVE OF BUILT THINGS</p>
-          <h2>Projects, <em>on record.</em></h2>
-          <p>Browse the work. Pull a tape from the shelf to see what went into it.</p>
-        </div>
-
-        <nav className="vhs-tabs" aria-label="Filter projects by category">
-          {categories.map((category) => (
-            <button key={category} type="button"
-              className={"vhs-tab " + (activeCategory === category ? "is-active" : "")}
-              onClick={() => setActiveCategory(category)}>
-              {category === "ALL" ? "ALL PROJECTS" : category}
-            </button>
-          ))}
-        </nav>
-
-        {loading ? <div className="vhs-empty">Loading the archive…</div> :
-          visibleProjects.length === 0 ? <div className="vhs-empty">No published projects in this collection yet.</div> : (
-          <>
-            <div className="vhs-stage-wrap">
-              <div className="vhs-stage" aria-label="Interactive project shelf">
-                <div className="vhs-shelf-shadow" />
-                {visibleProjects.map((project, index) => {
-                  const relative = index - activeIndex;
-                  if (Math.abs(relative) > 5) return null;
-                  const offset = relative === 0 ? 0 : Math.sign(relative) * (154 + (Math.abs(relative) - 1) * 76);
-                  const style = {
-                    "--offset-x": String(offset) + "px",
-                    "--tape-hue": String((index * 43 + 205) % 360),
-                    zIndex: 40 - Math.abs(relative),
-                  } as CSSProperties;
-                  const selected = index === activeIndex;
-                  return (
-                    <button key={project.id} type="button"
-                      className={"vhs-tape " + (selected ? "is-active" : "is-spine")}
-                      style={style}
-                      onClick={() => selected ? setDetailOpen(true) : setActiveIndex(index)}
-                      aria-label={(selected ? "Open " : "Select ") + project.title}
-                      aria-pressed={selected}
-                      data-cursor={selected ? "open" : "spine"}>
-                      {selected ? (
-                        <span className="vhs-cover">
-                          <span className="vhs-cover-art"><ProjectVisual project={project} index={index} /></span>
-                          <span className="vhs-cover-copy">
-                            <span className="vhs-cover-kicker">A SHISHIR SHETTY PROJECT</span>
-                            <strong>{project.title}</strong>
-                            <span className="vhs-cover-category">{project.category || "PROJECT"} · OPEN TO VIEW</span>
-                          </span>
-                          <span className="vhs-cover-stamp">SS<br />VHS</span>
-                        </span>
-                      ) : (
-                        <span className="vhs-spine-face">
-                          <span className="vhs-spine-index">{String(index + 1).padStart(2, "0")}</span>
-                          <span className="vhs-spine-title">{project.title}</span>
-                          <span className="vhs-spine-brand">SHISHIR · PROJECT ARCHIVE</span>
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-              <div className="vhs-shelf-edge"><span /></div>
-              <div className="vhs-shelf-caption">THE PROJECT SHELF <span>— SELECT A SPINE TO BROWSE</span></div>
-            </div>
-
-            {activeProject && (
-              <div className="vhs-caption" aria-live="polite">
-                <div className="vhs-caption-main">
-                  <p className="vhs-label">{activeProject.category || "SELECTED PROJECT"} · {String(activeIndex + 1).padStart(2, "0")} / {String(visibleProjects.length).padStart(2, "0")}</p>
-                  <h3>{activeProject.title}</h3>
-                  <p className="vhs-caption-description">{activeProject.short_description || activeProject.description || "A project built around a practical problem."}</p>
-                  <div className="vhs-tech-row">{(activeProject.technologies || []).slice(0, 4).map((technology) => <span key={technology}>{technology}</span>)}</div>
+        {loading ? <div className="py-10 text-center text-sm text-[#7b849a]">Loading projects...</div> : projects.length === 0 ? <div className="py-10 text-center text-sm text-[#7b849a]">No projects available.</div> : (
+          <div className="grid gap-6 lg:grid-cols-3">
+            {projects.map((project, index) => (
+              <motion.article key={project.id} initial={{ opacity: 0, y: 35 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: .15 }} transition={{ duration: .65, delay: index * .08 }} className="tech-card group rounded-[28px]">
+                <ProjectVisual project={project} index={index} />
+                <div className="p-6 md:p-7">
+                  <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-[.16em] text-blue-600/80">{project.category || "Project"}</p><h3 className="mt-2 text-2xl font-semibold tracking-tight">{project.title}</h3></div><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f1f5ff] transition group-hover:bg-[#101426] group-hover:text-white"><ArrowUpRight size={17} /></span></div>
+                  <p className="mt-4 text-sm leading-7 text-[#687187]">{project.short_description || project.description}</p>
+                  <div className="mt-5 flex flex-wrap gap-2">{(project.technologies || []).slice(0, 5).map(technology => <span key={technology} className="rounded-full bg-[#eef3ff] px-3 py-1.5 text-xs font-medium text-[#52658e]">{technology}</span>)}</div>
+                  {(project.problem || project.solution) && <div className="mt-5 rounded-2xl bg-[#f7f8fc] p-4"><p className="text-xs font-semibold uppercase tracking-[.14em] text-[#8a93a7]">The idea</p><p className="mt-2 text-sm leading-6 text-[#59627a]">{project.problem || project.solution}</p></div>}
+                  <div className="mt-6 flex gap-3">{project.github_url && <a href={project.github_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-black/8 px-4 py-2.5 text-sm font-medium text-[#39435a] transition hover:bg-[#101426] hover:text-white"><FaGithub size={15} /> GitHub</a>}{project.live_url && <a href={project.live_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full bg-[#101426] px-4 py-2.5 text-sm font-medium text-white transition hover:-translate-y-0.5">Live <ArrowUpRight size={15} /></a>}</div>
                 </div>
-                <div className="vhs-caption-actions">
-                  <button type="button" className="vhs-round-arrow" onClick={() => move(-1)} aria-label="Previous project"><ChevronLeft size={20} /></button>
-                  <button type="button" className="vhs-open-button" onClick={() => setDetailOpen(true)}>OPEN PROJECT <ArrowUpRight size={15} /></button>
-                  <button type="button" className="vhs-round-arrow" onClick={() => move(1)} aria-label="Next project"><ChevronRight size={20} /></button>
-                </div>
-              </div>
-            )}
-          </>
+              </motion.article>
+            ))}
+          </div>
         )}
-
-        <footer className="vhs-footer"><span>© SHISHIR SHETTY · SELECTED WORKS</span><span>BUILT WITH CURIOSITY & CODE</span></footer>
       </div>
-
-      {detailOpen && activeProject && (
-        <div className="vhs-detail-backdrop" role="presentation" onClick={() => setDetailOpen(false)}>
-          <article className="vhs-detail-sheet" role="dialog" aria-modal="true" aria-labelledby="vhs-detail-title" onClick={(event) => event.stopPropagation()}>
-            <button type="button" className="vhs-detail-close" onClick={() => setDetailOpen(false)} aria-label="Close project details"><X size={19} /> CLOSE</button>
-            <div className="vhs-detail-topline"><span>SHISHIR SHETTY · PROJECT ARCHIVE</span><span>{activeProject.category || "PROJECT"}</span></div>
-            <div className="vhs-detail-grid">
-              <div className="vhs-detail-poster">
-                <ProjectVisual project={activeProject} index={activeIndex} />
-                <span className="vhs-poster-caption">PROJECT NO. {String(activeIndex + 1).padStart(2, "0")}</span>
-              </div>
-              <div className="vhs-detail-content">
-                <p className="vhs-eyebrow">THE WORK / {activeProject.category || "PROJECT"}</p>
-                <h2 id="vhs-detail-title">{activeProject.title}</h2>
-                <p className="vhs-detail-description">{activeProject.description || activeProject.short_description}</p>
-                {activeProject.problem && <section><h3>THE PROBLEM</h3><p>{activeProject.problem}</p></section>}
-                {activeProject.solution && <section><h3>THE APPROACH</h3><p>{activeProject.solution}</p></section>}
-                <section><h3>BUILT WITH</h3><div className="vhs-detail-tech">{(activeProject.technologies || []).map((technology) => <span key={technology}>{technology}</span>)}</div></section>
-                <div className="vhs-detail-links">
-                  {activeProject.github_url && <a href={activeProject.github_url} target="_blank" rel="noreferrer"><FaGithub size={16} /> SOURCE CODE <ArrowUpRight size={14} /></a>}
-                  {activeProject.live_url && <a href={activeProject.live_url} target="_blank" rel="noreferrer">VIEW LIVE <ArrowUpRight size={14} /></a>}
-                </div>
-              </div>
-            </div>
-            <div className="vhs-detail-bottom"><span>END OF PROJECT RECORD</span><button type="button" onClick={() => { setDetailOpen(false); move(1); }}>NEXT PROJECT <ArrowUpRight size={14} /></button></div>
-          </article>
-        </div>
-      )}
     </section>
   );
 }
