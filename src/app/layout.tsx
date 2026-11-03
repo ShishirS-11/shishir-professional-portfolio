@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./vhs-projects.css";
 import "./public-motion.css";
+import "./portfolio-redesign.css";
 
 export const metadata: Metadata = {
   title: "Shishir Shetty | Software · Cloud · Data · AI",
