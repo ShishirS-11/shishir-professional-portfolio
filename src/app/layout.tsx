@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./vhs-projects.css";
 import "./public-motion.css";
 
 export const metadata: Metadata = {
